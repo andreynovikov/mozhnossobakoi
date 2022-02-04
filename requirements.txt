@@ -1,0 +1,6 @@
+Flask==2.0.2
+Flask_Admin==1.6.0
+marshmallow==3.14.1
+peewee==3.14.8
+python_telegram_bot==13.11
+WTForms==3.0.1
