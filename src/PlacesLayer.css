@@ -1,0 +1,41 @@
+.leaflet-popup-content p {
+    margin: 0 !important;
+}
+
+.leaflet-popup-content p.MuiTypography-gutterBottom {
+    margin-bottom: 0.35em !important;
+}
+
+.marker-cluster div {
+    font-family: 'Roboto', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-weight: 900;
+	font-size: 0.6rem;
+	color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.marker-cluster-small {
+	background-color: rgba(25, 118, 210, 0.4);
+}
+
+.marker-cluster-small div {
+	background-color: rgba(25, 118, 210, 0.8);
+}
+
+.marker-cluster-medium {
+    margin-left: -25px !important;
+    margin-top: -25px !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 25px !important;
+    background-color: rgba(25, 118, 210, 0.4);
+}
+
+.marker-cluster-medium div {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-color: rgba(25, 118, 210, 0.8);
+}
