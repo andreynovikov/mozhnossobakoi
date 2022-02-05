@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Outlet, Routes, Route, Link as RouterLink } from 'react-router-dom';
+import { Outlet, Routes, Route, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 import useTheme from '@mui/material/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -19,9 +19,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { SocialIcon } from 'react-social-icons';
 
 import Map from './Map';
-
+import PlacesList from './PlacesList';
 
 import './App.css';
+
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -37,9 +38,35 @@ export default function App() {
     const mobile = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
 
     const mapRef = useRef();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log('New location:', location.pathname);
+    }, [location]);
+
+    const onShowLocation = (position) => {
+        navigate('/');
+        new Promise(function (resolve, reject) {
+            (function waitForMap() {
+                if (mapRef && mapRef.current) return resolve();
+                setTimeout(waitForMap, 30);
+            })();
+        }).then(() => {
+            mapRef.current.showLocation([position.lat, position.lng]);
+        });
+    };
 
     const handleAdd = () => {
-        mapRef?.current.handleAdd();
+        navigate('/');
+        new Promise(function (resolve, reject) {
+            (function waitForMap() {
+                if (mapRef && mapRef.current) return resolve();
+                setTimeout(waitForMap, 30);
+            })();
+        }).then(() => {
+            mapRef.current.handleAdd();
+        });
     };
 
     return (
@@ -47,7 +74,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout mobile={mobile} handleAdd={handleAdd} />}>
             <Route index element={<Map ref={mapRef} mobile={mobile} />} />
-            <Route path="places" element={<Places />} />
+            <Route path="places" element={<PlacesList onShowLocation={onShowLocation} />} />
             <Route path="help" element={<Help />} />
             <Route path="about" element={<About />} />
           </Route>
@@ -146,16 +173,6 @@ function Layout({mobile, handleAdd}) {
         <Outlet />
       </div>
     );
-}
-
-function Places() {
-  return (
-    <Box sx={{ mx: 3, my: 2 }}>
-      <Typography variant="body1">
-        Здесь будет список мест
-      </Typography>
-    </Box>
-  );
 }
 
 function Help() {

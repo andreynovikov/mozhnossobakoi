@@ -84,6 +84,10 @@ export default forwardRef(function Map({mobile}, ref) {
         setPosition(pos);
     };
 
+    const showLocation = (location) => {
+        map.setView(location, 18);
+    };
+
     const handleAdd = () => {
         markerRef.current.setPosition(map.getCenter());
         let offset = undefined;
@@ -103,6 +107,7 @@ export default forwardRef(function Map({mobile}, ref) {
     };
 
     useImperativeHandle(ref, () => ({
+        showLocation,
         handleAdd
     }));
 

@@ -41,15 +41,15 @@ class Place(BaseModel):
                 'lng': self.longitude
             },
             'claimed': self.claimed,
+            'claim': self.claim,
+            'url': self.url,
+            'instagram': self.instagram
         }
         return data
 
     @property
     def serialize(self):
         data = self.serialize_list
-        data['url'] = self.url
-        data['instagram'] = self.instagram
-        data['claim'] = self.claim
         data['reviews'] = [review.serialize for review in self.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())]
         return data
 
