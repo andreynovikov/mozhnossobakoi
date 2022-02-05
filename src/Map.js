@@ -1,5 +1,5 @@
 import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
-import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
+import { MapContainer, LayersControl, TileLayer, useMapEvents } from 'react-leaflet';
 import { AddressSuggestions } from 'react-dadata';
 
 import Button from '@mui/material/Button';
@@ -105,10 +105,20 @@ export default forwardRef(function Map({mobile}, ref) {
         <div className="map-container">
           <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} className="map">
             <MapEvents onMapMoved={setMapCenter} onMapZoomed={setMapZoom} />
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <LayersControl position="bottomright">
+              <LayersControl.BaseLayer checked name="Open Street Map">
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer name="Stadia Maps">
+                <TileLayer
+                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                  url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
+                />
+              </LayersControl.BaseLayer>
+            </LayersControl>
             {!open && <PlacesLayer />}
             <LocateControl options={locateOptions} startDirectly={false} />
             <DraggableMarker ref={markerRef} visible={open} onPositionChange={onPositionChange} />
