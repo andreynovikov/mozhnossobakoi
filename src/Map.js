@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet';
 import { AddressSuggestions } from 'react-dadata';
 
@@ -44,7 +44,7 @@ function MapEvents({onMapMoved, onMapZoomed}) {
     return null;
 }
 
-export default function Map({mobile}) {
+export default forwardRef(function Map({mobile}, ref) {
     const locateOptions = {
         position: 'topleft',
         setView: 'untilPan',
@@ -65,8 +65,8 @@ export default function Map({mobile}) {
     const [offset, setOffset] = useState([0, 0]);
     const [position, setPosition] = useState({lat: 0, lng: 0});
 
-    const drawerRef = useRef(null);
-    const markerRef = useRef(null);
+    const drawerRef = useRef();
+    const markerRef = useRef();
 
     const setValueEx = (v) => {
         setValue(v);
@@ -97,6 +97,10 @@ export default function Map({mobile}) {
         setOpen(false);
     };
 
+    useImperativeHandle(ref, () => ({
+        handleAdd
+    }));
+
     return (
         <div className="map-container">
           <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} className="map">
@@ -110,7 +114,7 @@ export default function Map({mobile}) {
             <DraggableMarker ref={markerRef} visible={open} onPositionChange={onPositionChange} />
           </MapContainer>
 
-          <AddressSuggestions
+          {!open && <AddressSuggestions
             filterFromBound="country"
             filterToBound="house"
             inputProps={{placeholder: "Введите адрес"}}
@@ -118,9 +122,10 @@ export default function Map({mobile}) {
             token="6f1eeeda9215d36fce5802a014e1487e488cb2b3"
             value={value}
             onChange={setValueEx} />
+          }
 
-          <Button variant="contained" onClick={handleAdd} disabled={open} className="add-button">Добавить место</Button>
+          {mobile && <Button variant="contained" onClick={handleAdd} disabled={open} className="add-button">Добавить место</Button>}
           <NewPlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} position={position} />
         </div>
     );
-};
+});

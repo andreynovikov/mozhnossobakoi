@@ -81,7 +81,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
                 onSubmit={handleSubmit}
                 noValidate
                 autoComplete="off"
-                sx={{ mx: 2, maxWidth: mobile ? "inherit" : 400, maxHeight: mobile ? "60vh" : "inherit" }}
+                sx={{ mx: 2, mb: mobile ? 0.5 : 0, maxWidth: mobile ? "inherit" : 400, maxHeight: mobile ? "70vh" : "inherit" }}
             >
 
                 <TextField
@@ -138,7 +138,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
                     label="Описание"
                     helperText="Опишите подробно как давно, с какой собакой и на каких условиях вы там побывали"
                     multiline
-                    minRows={2}
+                    minRows={mobile ? 1 : 3}
                     maxRows={5}
                     value={description}
                     onChange={(event) => { setDescription(event.target.value) }}

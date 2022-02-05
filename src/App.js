@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Outlet, Routes, Route, Link as RouterLink } from 'react-router-dom';
 
@@ -36,11 +36,17 @@ export default function App() {
     const theme = useTheme();
     const mobile = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
 
+    const mapRef = useRef();
+
+    const handleAdd = () => {
+        mapRef?.current.handleAdd();
+    };
+
     return (
       <QueryClientProvider client={queryClient}>
         <Routes>
-          <Route path="/" element={<Layout mobile={mobile} />}>
-            <Route index element={<Map mobile={mobile} />} />
+          <Route path="/" element={<Layout mobile={mobile} handleAdd={handleAdd} />}>
+            <Route index element={<Map ref={mapRef} mobile={mobile} />} />
             <Route path="places" element={<Places />} />
             <Route path="help" element={<Help />} />
             <Route path="about" element={<About />} />
@@ -65,7 +71,7 @@ const pages = [
     }
 ];
 
-function Layout({mobile}) {
+function Layout({mobile, handleAdd}) {
     const [anchorElNav, setAnchorElNav] = useState(null);
 
     const handleOpenNavMenu = (e) => {
@@ -78,9 +84,9 @@ function Layout({mobile}) {
 
     return (
       <div className="App">
-        <header className="App-header">
-          <Typography variant={mobile ? "h5" : "h4"} component="h1" sx={{ flexGrow: 1, p: 1 }}>
-            <RouterLink to="/"><PetsIcon color="success" fontSize={mobile ? "medium" : "large"} style={{ verticalAlign: 'text-top', display: 'inline-flex' }} sx={{ mr: 1 }} /></RouterLink>
+        <Box component="header" sx={{ borderBottom: 1, borderColor: 'grey.400', position: 'relative', display: 'flex', flexGrow: 0, alignItems: 'center' }}>
+          <RouterLink to="/"><PetsIcon color="success" fontSize={mobile ? "medium" : "large"} sx={{ m: 1 }} /></RouterLink>
+          <Typography variant={mobile ? "h6" : "h4"} component="h1" sx={{ flexGrow: 1 }} style={{ overflowX: 'hidden' }}>
             #можноссобакой
           </Typography>
 
@@ -133,8 +139,9 @@ function Layout({mobile}) {
                 {page.title}
               </Button>
             ))}
+            <Button variant="contained" onClick={handleAdd} sx={{ my: 0, mx: 0.5 }}>Добавить место</Button>
           </Box>
-        </header>
+        </Box>
 
         <Outlet />
       </div>
@@ -143,24 +150,30 @@ function Layout({mobile}) {
 
 function Places() {
   return (
-    <div>
-      <p>This is the places page.</p>
-    </div>
+    <Box sx={{ mx: 3, my: 2 }}>
+      <Typography variant="body1">
+        Здесь будет список мест
+      </Typography>
+    </Box>
   );
 }
 
 function Help() {
   return (
-    <div>
-      <p>This is the help page.</p>
-    </div>
+    <Box sx={{ mx: 3, my: 2 }}>
+      <Typography variant="body1">
+        Здесь будут подсказки
+      </Typography>
+    </Box>
   );
 }
 
 function About() {
   return (
-    <div>
-      <p>This is the about page.</p>
-    </div>
+    <Box sx={{ mx: 3, my: 2 }}>
+      <Typography variant="body1">
+        Здесь будет описание проекта
+      </Typography>
+    </Box>
   );
 }
