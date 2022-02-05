@@ -8,6 +8,7 @@ import DraggableMarker from './DraggableMarker';
 import LocateControl from './LocateControl';
 import NewPlaceDrawer from './NewPlaceDrawer';
 import PlacesLayer from './PlacesLayer';
+import YandexTileLayer from './YandexTileLayer';
 
 import { useStickyState } from './hooks';
 
@@ -32,13 +33,16 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-function MapEvents({onMapMoved, onMapZoomed}) {
+function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange}) {
     useMapEvents({
         moveend: (e) => {
             onMapMoved(e.target.getCenter());
         },
         zoomend: (e) => {
             onMapZoomed(e.target.getZoom());
+        },
+        baselayerchange: (e) => {
+            onBaseLayerChange(e.name);
         }
     });
     return null;
@@ -60,6 +64,7 @@ export default forwardRef(function Map({mobile}, ref) {
     const [map, setMap] = useState(null);
     const [mapCenter, setMapCenter] = useStickyState([59.950240, 30.317502], "mapCenter");
     const [mapZoom, setMapZoom] = useStickyState(15, "mapZoom");
+    const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
     const [value, setValue] = useState();
     const [open, setOpen] = useState(false);
     const [offset, setOffset] = useState([0, 0]);
@@ -104,15 +109,18 @@ export default forwardRef(function Map({mobile}, ref) {
     return (
         <div className="map-container">
           <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} className="map">
-            <MapEvents onMapMoved={setMapCenter} onMapZoomed={setMapZoom} />
+            <MapEvents onMapMoved={setMapCenter} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
             <LayersControl position="bottomright">
-              <LayersControl.BaseLayer checked name="Open Street Map">
+              <LayersControl.BaseLayer checked={tileLayer === 'Yandex Map'} name="Yandex Map">
+                <YandexTileLayer />
+              </LayersControl.BaseLayer>
+              <LayersControl.BaseLayer checked={tileLayer === 'Open Street Map'} name="Open Street Map">
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
               </LayersControl.BaseLayer>
-              <LayersControl.BaseLayer name="Stadia Maps">
+              <LayersControl.BaseLayer checked={tileLayer === 'Stadia Maps'} name="Stadia Maps">
                 <TileLayer
                   attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
                   url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
