@@ -21,6 +21,7 @@ import { SocialIcon } from 'react-social-icons';
 import Map from './Map';
 import PlacesList from './PlacesList';
 import About from './About';
+import Help from './Help';
 
 import './App.css';
 
@@ -76,8 +77,8 @@ export default function App() {
           <Route path="/" element={<Layout mobile={mobile} handleAdd={handleAdd} />}>
             <Route index element={<Map ref={mapRef} mobile={mobile} />} />
             <Route path="places" element={<PlacesList onShowLocation={onShowLocation} />} />
-            <Route path="help" element={<Help />} />
-            <Route path="about" element={<About />} />
+            <Route path="help" element={<Help mobile={mobile} />} />
+            <Route path="about" element={<About mobile={mobile} />} />
           </Route>
         </Routes>
       </QueryClientProvider>
@@ -174,14 +175,4 @@ function Layout({mobile, handleAdd}) {
         <Outlet />
       </div>
     );
-}
-
-function Help() {
-  return (
-    <Box sx={{ mx: 3, my: 2 }}>
-      <Typography variant="body1">
-        Здесь будут подсказки
-      </Typography>
-    </Box>
-  );
 }
