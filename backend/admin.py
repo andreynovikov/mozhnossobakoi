@@ -1,6 +1,7 @@
 import logging
 
 from flask_admin import Admin
+from flask_admin.form import SecureForm
 from flask_admin.model import typefmt
 from flask_admin.contrib.peewee import ModelView
 from flask_admin.contrib.peewee.form import CustomModelConverter
@@ -28,6 +29,7 @@ class PlaceAdmin(ModelView):
     column_display_pk = False
     column_default_sort = ('id', True)
     inline_models = [(Review, dict(form_args = dict(id = dict(validators = [Optional()]))))]  # flask-admin/issues/1718
+    form_base_class = SecureForm
     form_overrides = dict(kind=wt_fields.SelectField)
     form_args = dict(kind=dict(choices=[
         ('hotel', 'hotel'),
@@ -37,6 +39,21 @@ class PlaceAdmin(ModelView):
         ('park', 'park'),
         ('other', 'other')
     ]))
+    form_widget_args = {
+        'name': {
+            'style': 'min-width: 50%'
+        },
+        'claim': {
+            'rows': 5,
+            'style': 'width: 98%'
+        },
+        'address': {
+            'style': 'width: 98%'
+        },
+        'url': {
+            'style': 'min-width: 50%'
+        }
+    }
 
     def _bool_formatter(view, context, model, name):
         return typefmt.bool_formatter(view, getattr(model, name) is not None)
