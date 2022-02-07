@@ -136,7 +136,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
                     size={mobile ? "small" : "medium"}
                     margin="normal"
                     label="Описание"
-                    helperText="Опишите подробно как давно, с какой собакой и на каких условиях вы там побывали"
+                    helperText="Опишите подробно, с какой собакой и на каких условиях вы там побывали"
                     multiline
                     minRows={mobile ? 1 : 3}
                     maxRows={5}
