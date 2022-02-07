@@ -61,8 +61,8 @@ export default function PlacesLayer() {
                     {(place.claim || place.reviews.length > 0) && <Typography variant="body1">
                       &laquo;{place.claim || place.reviews[0].message}&raquo;
                     </Typography>}
-                    {place.phone && <Link variant="caption" underline="none" href={`tel:${place.phone}`} className="phone-link">{formatPhoneNumber(place.phone)}</Link>}
-                    {place.url && <Link href={place.url} variant="caption">{place.url}</Link>}
+                    {place.phone && <Link variant="caption" underline="none" href={`tel:${place.phone}`} target="_blank" className="phone-link">{formatPhoneNumber(place.phone)}</Link>}
+                    {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}
                   </Stack>,
                   container
                 );

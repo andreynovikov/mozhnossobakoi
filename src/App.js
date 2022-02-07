@@ -153,15 +153,15 @@ function Layout({mobile, handleAdd}) {
               ))}
               <Divider />
               <MenuItem key="social" onClick={handleCloseNavMenu}>
-                <SocialIcon url="https://instagram.com/mozhnossobakoi" style={{ height: 25, width: 25, marginRight: 10 }} />
-                <SocialIcon url="https://telegram.me/mozhnossobakoi" style={{ height: 25, width: 25, marginRight: 10 }} />
+                <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+                <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
               </MenuItem>
             </Menu>
           </Box>
 
           <Box sx={{ display: { xs: 'none', md: 'flex'}, mx: 2, alignItems: 'center' }}>
-            <SocialIcon url="https://instagram.com/mozhnossobakoi" style={{ height: 25, width: 25, marginRight: 10 }} />
-            <SocialIcon url="https://telegram.me/mozhnossobakoi" style={{ height: 25, width: 25, marginRight: 10 }} />
+            <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+            <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             {pages.map((page) => (
               <Button key={page.to} component={RouterLink} to={page.to} sx={{ my: 0, mx: 0.5 }}>
                 {page.title}
