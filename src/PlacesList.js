@@ -45,8 +45,8 @@ export default function PlacesList({onShowLocation}) {
         <Alert severity="info" sx={{ mx: 1, mb: 1 }}>Скоро здесь появится поиск по городу и типу места.</Alert>
         {isSuccess && data ? <Masonry columns={{ xs: 1, sm: 2, md: 3, xl: 4 }} spacing={0}>
           {data.results.map((place, idx) =>
-            <Box sx={{ p: 1 }}>
-              <Card key={place.id} sx={{ minWidth: 275 }}>
+            <Box key={place.id} sx={{ p: 1 }}>
+              <Card sx={{ minWidth: 275 }}>
                 <CardContent>
                   <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={0.5}>
                     <Typography gutterBottom variant="h6" component="div">
