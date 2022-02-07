@@ -5,7 +5,6 @@ import { Outlet, Routes, Route, Link as RouterLink, useLocation, useNavigate } f
 import useTheme from '@mui/material/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -21,6 +20,7 @@ import { SocialIcon } from 'react-social-icons';
 
 import Map from './Map';
 import PlacesList from './PlacesList';
+import About from './About';
 
 import './App.css';
 
@@ -181,17 +181,6 @@ function Help() {
     <Box sx={{ mx: 3, my: 2 }}>
       <Typography variant="body1">
         Здесь будут подсказки
-      </Typography>
-    </Box>
-  );
-}
-
-function About() {
-  return (
-    <Box sx={{ mx: 3, my: 2 }}>
-      <Alert severity="warning" sx={{mb: 2}}>Проект находится в стадии активной начальной разработки. Приносим извинения за временные неудобства. Но уже сейчас мы будем рады любой вашей информации!</Alert>
-      <Typography variant="body1">
-        Здесь будет описание проекта
       </Typography>
     </Box>
   );
