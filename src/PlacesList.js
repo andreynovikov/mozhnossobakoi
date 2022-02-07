@@ -41,7 +41,7 @@ export default function PlacesList({onShowLocation}) {
     );
 
     return (
-      <Box sx={{ justifyContent: 'center', p: 2 }}>
+      <Box sx={{ p: 2 }}>
         <Alert severity="info" sx={{ mx: 1, mb: 1 }}>Скоро здесь появится поиск по городу и типу места.</Alert>
         {isSuccess && data ? <Masonry columns={{ xs: 1, sm: 2, md: 3, xl: 4 }} spacing={0}>
           {data.results.map((place, idx) =>
@@ -76,7 +76,11 @@ export default function PlacesList({onShowLocation}) {
               </Card>
             </Box>
           )}
-        </Masonry> : <CircularProgress />}
+        </Masonry>
+        :
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+          <CircularProgress />
+        </Box>}
       </Box>
     );
 }
