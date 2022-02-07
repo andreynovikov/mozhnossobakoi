@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 
 from peewee import Model
@@ -7,6 +9,11 @@ from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
 
 from app import db
+
+
+logger = logging.getLogger('mozhnossobakoi')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
 
 
 class BaseModel(Model):
@@ -27,8 +34,11 @@ class Place(BaseModel):
     visible = BooleanField(default=True, index=True)
     claimed = BooleanField(default=False)
     claim = TextField(null=True)
+    address = CharField(null=True)
+    phone = CharField(null=True)
     url = CharField(null=True)
     instagram = CharField(null=True)
+    telegram = CharField(null=True)
 
     @property
     def serialize_list(self):
@@ -40,10 +50,15 @@ class Place(BaseModel):
                 'lat': self.latitude,
                 'lng': self.longitude
             },
+            'review_count': hasattr(self, 'review_count') and self.review_count,
+            'last_visited': hasattr(self, 'last_visited') and self.last_visited and self.last_visited.isoformat(),
             'claimed': self.claimed,
             'claim': self.claim,
+            'address': self.address,
+            'phone': self.phone,
             'url': self.url,
-            'instagram': self.instagram
+            'instagram': self.instagram,
+            'telegram': self.telegram
         }
         return data
 
@@ -73,6 +88,7 @@ class InetField(Field):
 class Review(BaseModel):
     place = ForeignKeyField(Place, backref='reviews')
     message = TextField()
+    source = CharField(null=True)
     created_date = DateTimeField(default=datetime.now)
     visited_date = DateField()
     is_published = BooleanField(default=True, index=True)

@@ -1,3 +1,5 @@
+import logging
+
 from flask_admin import Admin
 from flask_admin.model import typefmt
 from flask_admin.contrib.peewee import ModelView
@@ -10,12 +12,17 @@ from app import app
 from models import *
 
 
+logger = logging.getLogger('mozhnossobakoi')
+logger.addHandler(logging.StreamHandler())
+logger.setLevel(logging.DEBUG)
+
+
 CustomModelConverter.defaults[InetField] = wt_fields.StringField
 
 
 class PlaceAdmin(ModelView):
     create_modal = True
-    column_list = ['kind', 'name', 'visible', 'claimed', 'url']
+    column_list = ['kind', 'name', 'visible', 'claimed', 'address', 'url']
     column_searchable_list = ['name']
     column_filters = ['kind', 'visible', 'claimed']
     column_display_pk = False
@@ -31,11 +38,12 @@ class PlaceAdmin(ModelView):
         ('other', 'other')
     ]))
 
-    def _url_formatter(view, context, model, name):
-        return typefmt.bool_formatter(view, model.url is not None)
+    def _bool_formatter(view, context, model, name):
+        return typefmt.bool_formatter(view, getattr(model, name) is not None)
 
     column_formatters = {
-        'url': _url_formatter
+        'address': _bool_formatter,
+        'url': _bool_formatter
     }
 
 
