@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import DraggableMarker from './DraggableMarker';
 import LocateControl from './LocateControl';
 import NewPlaceDrawer from './NewPlaceDrawer';
+import PlaceDrawer from './PlaceDrawer';
 import PlacesLayer from './PlacesLayer';
 import YandexTileLayer from './YandexTileLayer';
 
@@ -66,11 +67,14 @@ export default forwardRef(function Map({mobile}, ref) {
     const [mapZoom, setMapZoom] = useStickyState(15, "mapZoom");
     const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
     const [value, setValue] = useState();
-    const [open, setOpen] = useState(false);
+    const [placeId, setPlaceId] = useState(0);
+    const [placeDrawerOpen, setPlaceDrawerOpen] = useState(false);
+    const [newPlaceDrawerOpen, setNewPlaceDrawerOpen] = useState(false);
     const [offset, setOffset] = useState([0, 0]);
     const [position, setPosition] = useState({lat: 0, lng: 0});
 
-    const drawerRef = useRef();
+    const placeDrawerRef = useRef();
+    const newPlaceDrawerRef = useRef();
     const markerRef = useRef();
 
     const setValueEx = (v) => {
@@ -92,18 +96,28 @@ export default forwardRef(function Map({mobile}, ref) {
         markerRef.current.setPosition(map.getCenter());
         let offset = undefined;
         if (mobile) {
-            offset = [0, drawerRef.current.children[0].offsetHeight / 2];
+            offset = [0, newPlaceDrawerRef.current.children[0].offsetHeight / 2];
         } else {
-            offset = [drawerRef.current.children[0].offsetWidth / 2, 0];
+            offset = [newPlaceDrawerRef.current.children[0].offsetWidth / 2, 0];
         }
         setOffset(offset);
         map.panBy(offset, {animate: true});
-        setOpen(true);
+        setNewPlaceDrawerOpen(true);
     };
 
-    const onClose = () => {
+    const onPlaceDetails = (id) => {
+        setPlaceId(id);
+        setPlaceDrawerOpen(true);
+    };
+
+    const onPlaceDrawerClose = () => {
+        setPlaceDrawerOpen(false);
+        setPlaceId(0);
+    };
+
+    const onNewPlaceDrawerClose = () => {
         map.panBy([-offset[0], -offset[1]], {animate: true});
-        setOpen(false);
+        setNewPlaceDrawerOpen(false);
     };
 
     useImperativeHandle(ref, () => ({
@@ -132,12 +146,12 @@ export default forwardRef(function Map({mobile}, ref) {
                 />
               </LayersControl.BaseLayer>
             </LayersControl>
-            {!open && <PlacesLayer />}
+            {!newPlaceDrawerOpen && <PlacesLayer onPlaceDetails={onPlaceDetails} />}
             <LocateControl options={locateOptions} startDirectly={false} />
-            <DraggableMarker ref={markerRef} visible={open} onPositionChange={onPositionChange} />
+            <DraggableMarker ref={markerRef} visible={newPlaceDrawerOpen} onPositionChange={onPositionChange} />
           </MapContainer>
 
-          {!open && <AddressSuggestions
+          {!newPlaceDrawerOpen && <AddressSuggestions
             filterFromBound="country"
             filterToBound="house"
             inputProps={{placeholder: "Введите адрес"}}
@@ -147,8 +161,9 @@ export default forwardRef(function Map({mobile}, ref) {
             onChange={setValueEx} />
           }
 
-          {mobile && <Button variant="contained" onClick={handleAdd} disabled={open} className="add-button">Добавить место</Button>}
-          <NewPlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} position={position} />
+          {mobile && <Button variant="contained" onClick={handleAdd} disabled={newPlaceDrawerOpen} className="add-button">Добавить место</Button>}
+          <PlaceDrawer ref={placeDrawerRef} open={placeDrawerOpen} onClose={onPlaceDrawerClose} mobile={mobile} id={placeId} />
+          <NewPlaceDrawer ref={newPlaceDrawerRef} open={newPlaceDrawerOpen} onClose={onNewPlaceDrawerClose} mobile={mobile} position={position} />
         </div>
     );
 });

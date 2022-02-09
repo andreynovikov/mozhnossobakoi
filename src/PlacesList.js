@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useQuery } from 'react-query';
 
 import Alert from '@mui/material/Alert';
@@ -8,7 +8,6 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CircularProgress from '@mui/material/CircularProgress';
-import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -25,11 +24,17 @@ import {
     loadPlaces,
 } from './queries';
 
+import PlaceDrawer from './PlaceDrawer';
 import PlaceIcon from './PlaceIcon';
 import { formatPhoneNumber } from './utils';
 
 
-export default function PlacesList({onShowLocation}) {
+export default function PlacesList({mobile, onShowLocation}) {
+    const [open, setOpen] = useState(false);
+    const [placeId, setPlaceId] = useState();
+
+    const drawerRef = useRef();
+
     const {data, isSuccess} = useQuery(
         placeKeys.list(),
         () => loadPlaces(),
@@ -39,6 +44,15 @@ export default function PlacesList({onShowLocation}) {
             }
         }
     );
+
+    const onOpenPlace = (id) => {
+        setPlaceId(id);
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
 
     return (
       <Box sx={{ p: 2 }}>
@@ -66,6 +80,7 @@ export default function PlacesList({onShowLocation}) {
                 </CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-end" spacing={0.5}>
                   <CardActions>
+                    <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
                     <Button size="small" onClick={() => onShowLocation(place.position)}>Показать на карте</Button>
                   </CardActions>
                   <Stack direction="row" spacing={0.5} sx={{ p: 1 }}>
@@ -81,6 +96,7 @@ export default function PlacesList({onShowLocation}) {
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
           <CircularProgress />
         </Box>}
+        <PlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} id={placeId} />
       </Box>
     );
 }

@@ -6,6 +6,8 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 
 import L from 'leaflet';
 
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -24,7 +26,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import './PlacesLayer.css';
 
 
-export default function PlacesLayer() {
+export default function PlacesLayer({onPlaceDetails}) {
     const [placeId, setPlaceId] = useState(0);
     const [marker, setMarker] = useState(0);
 
@@ -63,6 +65,9 @@ export default function PlacesLayer() {
                     </Typography>}
                     {place.phone && <Link variant="caption" underline="none" href={`tel:${place.phone}`} target="_blank" className="phone-link">{formatPhoneNumber(place.phone)}</Link>}
                     {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}
+                    <Box sx={{ pt: 1 }}>
+                      <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
+                    </Box>
                   </Stack>,
                   container
                 );
@@ -85,6 +90,12 @@ export default function PlacesLayer() {
             setMarker(e.target);
             setPlaceId(id);
         }
+    };
+
+    const onOpenPlace = (id) => {
+        marker.closePopup();
+        setPlaceId(0);
+        onPlaceDetails(id);
     };
 
     return (

@@ -20,6 +20,7 @@ import { SocialIcon } from 'react-social-icons';
 
 import Map from './Map';
 import PlacesList from './PlacesList';
+import PlaceView from './PlaceView';
 import About from './About';
 import Help from './Help';
 
@@ -76,7 +77,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout mobile={mobile} handleAdd={handleAdd} />}>
             <Route index element={<Map ref={mapRef} mobile={mobile} />} />
-            <Route path="places" element={<PlacesList onShowLocation={onShowLocation} />} />
+            <Route path="places" element={<PlacesList mobile={mobile} onShowLocation={onShowLocation} />} />
+            <Route path="places/:id" element={<PlaceView mobile={mobile} /> } />
             <Route path="help" element={<Help mobile={mobile} />} />
             <Route path="about" element={<About mobile={mobile} />} />
           </Route>
