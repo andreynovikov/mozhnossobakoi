@@ -16,6 +16,16 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
+PLACE_KIND = [
+    ("hotel", "Отель / аппартаменты"),
+    ("camp", "База отдыха / загородный клуб"),
+    ("cafe", "Кафе / бар / ресторан"),
+    ("park", "Парк / зона отдыха / маршрут"),
+    ("shop", "Магазин"),
+    ("other", "Другое")
+]
+
+
 class BaseModel(Model):
     class Meta:
         database = db
@@ -66,6 +76,8 @@ class Place(BaseModel):
     def serialize(self):
         data = self.serialize_list
         data['reviews'] = [review.serialize for review in self.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())]
+        if data['reviews']:
+            data['last_visited'] = data['reviews'][0]['visited']  # should refactor
         return data
 
 

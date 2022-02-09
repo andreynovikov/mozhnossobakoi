@@ -22,7 +22,6 @@ CustomModelConverter.defaults[InetField] = wt_fields.StringField
 
 
 class PlaceAdmin(ModelView):
-    create_modal = True
     column_list = ['kind', 'name', 'visible', 'claimed', 'address', 'url']
     column_searchable_list = ['name']
     column_filters = ['kind', 'visible', 'claimed']
