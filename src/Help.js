@@ -1,4 +1,5 @@
 import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 
 
@@ -31,6 +32,7 @@ export default function Help({mobile}) {
       <Typography variant="body1" gutterBottom>
         Можно! Просто добавьте тег <Typography variant="overline">#можноссобакой</Typography> к вашему рассказу об этом месте в инстаграм, и мы его увидим.
         А если не хотите о нём рассказывать, напишите нам в директ.
+        Ещё у нас есть телеграм бот <Link href="https://telegram.me/mozhnossobakoi_bot" target="_blank">@mozhnossobakoi_bot</Link>, ему тоже можно сообщить о найденном месте.
       </Typography>
 
       <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>Как мне найти нужное место?</Typography>
