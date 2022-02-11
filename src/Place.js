@@ -45,8 +45,8 @@ export default function Place({id, mobile}) {
             <PlaceIcon kind={place.kind} fontSize="large" color={place.claimed ? "success" : "primary"} />
             <Typography variant={ mobile ? "h5" : id ? "h3" : "h1"} component="h1">
               {place.name}
-              {place.last_visited && <Typography variant="caption" component="div" color="text.secondary">
-                {moment(place.last_visited).format('MMMM YYYY')}
+              {place.last_seen && moment(place.last_seen).isAfter('0001-01-01') && <Typography variant="caption" component="div" color="text.secondary">
+                {moment(place.last_seen).format('MMMM YYYY')}
               </Typography>}
             </Typography>
           </Stack>

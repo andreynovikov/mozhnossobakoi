@@ -1,8 +1,8 @@
 import logging
 
-from datetime import datetime
+from datetime import datetime, date
 
-from peewee import Model
+from playhouse.signals import Model, pre_save
 from peewee import Field, BooleanField, CharField, DateField, DateTimeField, FloatField, ForeignKeyField, TextField
 
 from marshmallow import Schema, fields
@@ -42,7 +42,8 @@ class Place(BaseModel):
     latitude = FloatField()
     longitude = FloatField()
     visible = BooleanField(default=True, index=True)
-    claimed = BooleanField(default=False)
+    last_seen = DateField()
+    claimed = DateField(null=True)
     claim = TextField(null=True)
     address = CharField(null=True)
     phone = CharField(null=True)
@@ -60,8 +61,7 @@ class Place(BaseModel):
                 'lat': self.latitude,
                 'lng': self.longitude
             },
-            'review_count': hasattr(self, 'review_count') and self.review_count,
-            'last_visited': hasattr(self, 'last_visited') and self.last_visited and self.last_visited.isoformat(),
+            'last_seen': self.last_seen.isoformat(),
             'claimed': self.claimed,
             'claim': self.claim,
             'address': self.address,
@@ -76,9 +76,17 @@ class Place(BaseModel):
     def serialize(self):
         data = self.serialize_list
         data['reviews'] = [review.serialize for review in self.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())]
-        if data['reviews']:
-            data['last_visited'] = data['reviews'][0]['visited']  # should refactor
         return data
+
+
+@pre_save(sender=Place)
+def on_save_handler(model_class, instance, created):
+    last_seen = [date.min]
+    if instance.reviews:
+        last_seen.append(instance.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())[0].visited_date)
+    if instance.claimed:
+        last_seen.append(instance.claimed)
+    instance.last_seen = max(last_seen)
 
 
 class PlaceSchema(Schema):
@@ -86,11 +94,11 @@ class PlaceSchema(Schema):
     kind = fields.Str(required=True)
     name = fields.Str(required=True, validate=Length(max=100))
     position = fields.Nested(PositionSchema, many = False)
-    visited = fields.Date(required=False, load_default=datetime.now())
 
 
 class PlaceCreateSchema(PlaceSchema):
     description = fields.Str(required=True, validate=Length(max=10000))
+    visited = fields.Date(required=False, load_default=datetime.now())
 
 
 class InetField(Field):

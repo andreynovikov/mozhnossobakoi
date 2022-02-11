@@ -67,8 +67,8 @@ export default function PlacesList({mobile, onShowLocation}) {
                       <PlaceIcon kind={place.kind} fontSize="small" color={place.claimed ? "success" : "primary"} style={{ verticalAlign: 'text-top', display: 'inline-flex' }} sx={{ mr: 0.5 }} />
                       {place.name}
                     </Typography>
-                    {place.last_visited && <Typography sx={{ mb: 1.5 }} variant="caption" color="text.secondary">
-                      {moment(place.last_visited).format('MMMM YYYY')}
+                    {place.last_seen && moment(place.last_seen).isAfter('0001-01-01') && <Typography sx={{ mb: 1.5 }} variant="caption" color="text.secondary">
+                      {moment(place.last_seen).format('MMMM YYYY')}
                     </Typography>}
                   </Stack>
                   <Stack direction="column" spacing={0.5}>

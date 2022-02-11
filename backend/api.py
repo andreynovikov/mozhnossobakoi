@@ -1,6 +1,6 @@
 from flask import abort, jsonify, request
 from marshmallow import ValidationError
-from peewee import fn, JOIN, DoesNotExist, PeeweeException
+from peewee import DoesNotExist, PeeweeException
 
 from app import app
 from models import *
@@ -30,25 +30,9 @@ DELETE destroy
 def list_places():
     query = (
         Place
-        .select(
-            Place,
-            fn.Count(Review.id).alias('review_count'),
-            fn.MAX(Review.visited_date).alias('last_visited'),
-        )
-        .join(
-            Review,
-            JOIN.LEFT_OUTER,
-            on=((Place.id == Review.place_id) & (Review.is_published == True))
-        )
-        .group_by(
-            Place
-        )
-        .where(
-            Place.visible == True
-        )
-        .order_by(
-            fn.MAX(Review.visited_date).desc(nulls='LAST')
-        )
+        .select()
+        .where(Place.visible == True)
+        .order_by(Place.last_seen.desc())
     )
     results = [p.serialize_list for p in query]
     return {
