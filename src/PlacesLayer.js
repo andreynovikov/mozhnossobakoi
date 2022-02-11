@@ -8,9 +8,7 @@ import L from 'leaflet';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
 
 import {
     placeKeys,
@@ -19,7 +17,6 @@ import {
 } from './queries';
 
 import PlaceIcon from './PlaceIcon';
-import { formatPhoneNumber } from './utils';
 
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -55,20 +52,20 @@ export default function PlacesLayer({onPlaceDetails}) {
             if (!marker.getPopup()) {
                 const container = L.DomUtil.create('div');
                 render(
-                  <Stack direction="column" spacing={0.5}>
-                    <Typography variant="h6" component="h6">
+                  <Box>
+                    <Typography variant="h6" component="h6" gutterBottom>
                        <PlaceIcon kind={place.kind} color={place.claimed ? "success" : "primary"} style={{ verticalAlign: 'text-top', display: 'inline-flex' }} sx={{ mr: 0.5 }} />
                        {place.name}
                     </Typography>
-                    {(place.claim || place.reviews.length > 0) && <Typography variant="body1">
-                      &laquo;{place.claim || place.reviews[0].message}&raquo;
+                    {place.claim ?
+                      <Typography variant={place.claim.length > 100 ? "body2" : "body1"} gutterBottom>
+                        {place.claim}
+                      </Typography>
+                    : place.reviews.length > 0 && <Typography variant="body1" gutterBottom>
+                       &laquo;{place.claim || place.reviews[0].message}&raquo;
                     </Typography>}
-                    {place.phone && <Link variant="caption" underline="none" href={`tel:${place.phone}`} target="_blank" className="phone-link">{formatPhoneNumber(place.phone)}</Link>}
-                    {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}
-                    <Box sx={{ pt: 1 }}>
-                      <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
-                    </Box>
-                  </Stack>,
+                    <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
+                  </Box>,
                   container
                 );
                 marker.bindPopup(container, {
