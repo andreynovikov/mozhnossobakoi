@@ -127,7 +127,7 @@ export default forwardRef(function Map({mobile}, ref) {
 
     return (
         <div className="map-container">
-          <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} className="map">
+          <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} minZoom={3} className="map">
             <MapEvents onMapMoved={setMapCenter} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
             <LayersControl position="bottomright">
               <LayersControl.BaseLayer checked={tileLayer === 'Yandex Map'} name="Yandex Map">
