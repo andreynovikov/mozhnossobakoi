@@ -1,6 +1,9 @@
-import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { MapContainer, LayersControl, TileLayer, useMapEvents } from 'react-leaflet';
+
 import { AddressSuggestions } from 'react-dadata';
+import ReactGA from 'react-ga4';
 
 import Button from '@mui/material/Button';
 
@@ -11,7 +14,7 @@ import PlaceDrawer from './PlaceDrawer';
 import PlacesLayer from './PlacesLayer';
 import YandexTileLayer from './YandexTileLayer';
 
-import { useStickyState } from './hooks';
+import { useStickyState, useDocumentTitle } from './hooks';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -76,6 +79,13 @@ export default forwardRef(function Map({mobile}, ref) {
     const placeDrawerRef = useRef();
     const newPlaceDrawerRef = useRef();
     const markerRef = useRef();
+
+    useDocumentTitle('#можноссобакой - карта и каталог доступных для посещения с собакой мест');
+    const location = useLocation();
+
+    useEffect(() => {
+        ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Карта мест' });
+    }, []);
 
     const setValueEx = (v) => {
         setValue(v);

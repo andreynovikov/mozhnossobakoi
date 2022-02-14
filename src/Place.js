@@ -1,4 +1,8 @@
+import { useEffect } from 'react';
 import { useQuery } from 'react-query';
+import { useLocation } from 'react-router-dom';
+
+import ReactGA from 'react-ga4';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -26,6 +30,8 @@ import './Place.css';
 
 
 export default function Place({id, mobile}) {
+    const location = useLocation();
+
     const {data: place, isSuccess} = useQuery(
         placeKeys.detail(id),
         () => loadPlace(id),
@@ -36,6 +42,11 @@ export default function Place({id, mobile}) {
             }
         }
     );
+
+    useEffect(() => {
+        if (isSuccess)
+            ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: place.name });
+    }, [place, isSuccess]);
 
     return (
       isSuccess && place ?

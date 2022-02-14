@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Outlet, Routes, Route, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
+import ReactGA from 'react-ga4';
+
 import useTheme from '@mui/material/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -26,6 +28,8 @@ import Help from './Help';
 
 import './App.css';
 
+
+ReactGA.initialize('G-JGSV7BSDK1');
 
 const queryClient = new QueryClient({
     defaultOptions: {

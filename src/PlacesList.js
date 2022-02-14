@@ -1,5 +1,8 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
+import { useLocation } from 'react-router-dom';
+
+import ReactGA from 'react-ga4';
 
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -26,6 +29,7 @@ import {
 
 import PlaceDrawer from './PlaceDrawer';
 import PlaceIcon from './PlaceIcon';
+import { useDocumentTitle } from './hooks';
 import { formatPhoneNumber } from './utils';
 
 
@@ -34,6 +38,13 @@ export default function PlacesList({mobile, onShowLocation}) {
     const [placeId, setPlaceId] = useState();
 
     const drawerRef = useRef();
+
+    useDocumentTitle('Список мест, куда #можноссобакой');
+    const location = useLocation();
+
+    useEffect(() => {
+        ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Список мест' });
+    }, []);
 
     const {data, isSuccess} = useQuery(
         placeKeys.list(),

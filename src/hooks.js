@@ -13,3 +13,9 @@ export function useStickyState(defaultValue, key) {
 
     return [value, setValue];
 }
+
+export function useDocumentTitle(title) {
+    useEffect(() => {
+        document.title = title;
+    }, [title]);
+}
