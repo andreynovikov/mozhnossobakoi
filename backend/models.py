@@ -2,7 +2,7 @@ import logging
 
 from datetime import datetime, date
 
-from playhouse.signals import Model, pre_save
+from playhouse.signals import Model, pre_save, post_save, post_delete
 from peewee import Field, BooleanField, CharField, DateField, DateTimeField, FloatField, ForeignKeyField, TextField
 
 from marshmallow import Schema, fields
@@ -80,7 +80,7 @@ class Place(BaseModel):
 
 
 @pre_save(sender=Place)
-def on_save_handler(model_class, instance, created):
+def on_place_save(model_class, instance, created):
     last_seen = [date.min]
     if instance.reviews:
         last_seen.append(instance.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())[0].visited_date)
@@ -122,3 +122,15 @@ class Review(BaseModel):
             'created': self.created_date.isoformat(timespec='seconds'),
             'visited': self.visited_date.isoformat()
         }
+
+
+@post_save(sender=Review)
+def on_review_save(model_class, instance, created):
+    # re-save place to update last_seen property
+    instance.place.save()
+
+
+@post_delete(sender=Review)
+def on_review_delete(model_class, instance, created):
+    # re-save place to update last_seen property
+    instance.place.save()
