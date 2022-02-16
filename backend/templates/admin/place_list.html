@@ -1,0 +1,8 @@
+{# https://github.com/flask-admin/flask-admin/issues/998 #}
+{% extends 'admin/model/list.html' %}
+{% block list_row_actions %}
+{{ super() }}
+<a class="icon" href="https://yandex.ru/maps/?ll={{ row.longitude }},{{ row.latitude }}&z=17" target="_blank" title="Open on map">
+  <span class="fa fa-globe glyphicon icon-globe"></span>
+</a>
+{% endblock %}

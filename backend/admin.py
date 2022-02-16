@@ -23,10 +23,11 @@ CustomModelConverter.defaults[InetField] = wt_fields.StringField
 
 class PlaceAdmin(ModelView):
     column_list = ['kind', 'name', 'visible', 'last_seen', 'claimed', 'address', 'url']
-    column_searchable_list = ['name']
+    column_searchable_list = ['name', 'address']
     column_filters = ['kind', 'visible', 'claimed']
     column_display_pk = False
     column_default_sort = ('id', True)
+    list_template = 'admin/place_list.html'
     inline_models = [(Review, dict(form_args = dict(id = dict(validators = [Optional()]))))]  # flask-admin/issues/1718
     form_base_class = SecureForm
     form_excluded_columns = ['last_seen']
