@@ -175,7 +175,7 @@ export default function PlaceFilter({mobile, action, address, onFiltersChanged})
 
     return (
       <Stack direction={mobile ? "column": "row"} spacing={1}>
-        <FormControl sx={{ minWidth: 180 }}>
+        <FormControl sx={{ minWidth: 180 }} size={mobile ? "small" : "medium"}>
           <InputLabel id="location-select-label">Где находится?</InputLabel>
           <Select
             labelId="location-select-label"
@@ -194,7 +194,7 @@ export default function PlaceFilter({mobile, action, address, onFiltersChanged})
           </Select>
         </FormControl>
         { subLocations.length ? (
-          <FormControl sx={{ minWidth: 240 }}>
+          <FormControl sx={{ minWidth: 240 }} size={mobile ? "small" : "medium"}>
             <InputLabel id="sub-location-select-label">Уточните расположение</InputLabel>
             <Select
               labelId="sub-location-select-label"
@@ -213,7 +213,7 @@ export default function PlaceFilter({mobile, action, address, onFiltersChanged})
             </Select>
           </FormControl>
         ) : ''}
-        <FormControl sx={{ minWidth: 180 }}>
+        <FormControl sx={{ minWidth: 180 }} size={mobile ? "small" : "medium"}>
           <InputLabel id="action-select-label">Что интересует?</InputLabel>
           <Select
             labelId="action-select-label"
