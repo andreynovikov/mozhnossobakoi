@@ -49,13 +49,13 @@ export default function About({mobile}) {
         </Typography>
 
         <Typography variant="body1" gutterBottom>
-          Мы только начинаем, впереди много планов &mdash; добавить разные способы поиска мест, предоставить владельцам возможность самостоятельно заявлять о себе, добавить возможность
-          оставлять отзывы об уже имеющихся местах. И это только малая их часть.
+          Мы только начинаем, впереди много планов &mdash; предоставить владельцам возможность самостоятельно заявлять о себе, добавить возможность оставлять отзывы об уже имеющихся
+          местах. И это только малая их часть.
         </Typography>
 
         <Typography variant="body1" gutterBottom>
           А ещё у проекта есть <Link href="https://instagram.com/mozhnossobakoi" target="_blank">инстаграм</Link>
-          &nbsp;и <Link href="https://telegram.me/mozhnossobakoi" target="_blank">телеграм</Link>! Там мы скоро начнём публиковать новые интересные места, подписывайтесь!
+          &nbsp;и <Link href="https://telegram.me/mozhnossobakoi" target="_blank">телеграм</Link>! Там мы публикуем новые интересные места, подписывайтесь!
         </Typography>
 
         <Typography variant="overline" component="div">
