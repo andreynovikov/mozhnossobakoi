@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery } from 'react-query';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import ReactGA from 'react-ga4';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -28,33 +27,93 @@ import {
 } from './queries';
 
 import PlaceDrawer from './PlaceDrawer';
+import PlaceFilter from './PlaceFilter';
 import PlaceIcon from './PlaceIcon';
+import PostalAddress from './PostalAddress';
 import { useDocumentTitle } from './hooks';
 import { formatPhoneNumber } from './utils';
 
 
+function humanizeAction(action) {
+    switch (action) {
+    case 'camp':
+        return 'пожить на природе';
+    case 'hotel':
+        return 'переночевать';
+    case 'cafe':
+        return 'поесть';
+    case 'shop':
+        return 'купить что-то';
+    case 'park':
+        return 'погулять';
+    default:
+        return 'заняться чем-то другим';
+    }
+}
+
+function humanizeAddress(address) {
+    return address
+        .replace('город ', 'городе ')
+        .replace('республика ', 'республике ')
+        .replace('ая область', 'ой области')
+        .replace('ий край', 'ом крае')
+        .replace('ий район', 'ом районе');
+}
+
 export default function PlacesList({mobile, onShowLocation}) {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [title, setTitle] = useState('');
+    const [actionFilter, setActionFilter] = useState(searchParams.get('action'));
+    const [addressFilter, setAddressFilter] = useState(searchParams.get('address'));
     const [open, setOpen] = useState(false);
     const [placeId, setPlaceId] = useState();
 
     const drawerRef = useRef();
 
-    useDocumentTitle('Список мест, куда #можноссобакой');
+    useDocumentTitle(title);
     const location = useLocation();
 
     useEffect(() => {
-        ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Список мест' });
-    }, []);
+        setActionFilter(searchParams.get('action'));
+        setAddressFilter(searchParams.get('address'));
+    }, [searchParams]);
 
     const {data, isSuccess} = useQuery(
-        placeKeys.list(),
-        () => loadPlaces(),
+        placeKeys.list(actionFilter, addressFilter),
+        () => loadPlaces(actionFilter, addressFilter),
         {
             onError: (error) => {
                 console.error(error);
             }
         }
     );
+
+    useEffect(() => {
+        var title = 'Места';
+        if (actionFilter) {
+            title += ', где ' + humanizeAction(actionFilter);
+            if (!addressFilter)
+                title += ' там';
+        }
+        if (addressFilter)
+            title += ' в ' + humanizeAddress(addressFilter);
+        title += ', куда можно с собакой';
+        setTitle(title);
+        ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: title }); // we place it here to send correct page title
+    }, [actionFilter, addressFilter]);
+
+    const onFiltersChanged = (action, address) => {
+        console.log('action changed:', action);
+        console.log('address changed:', address);
+        var params = {};
+        if (action)
+            params['action'] = action;
+        if (address)
+            params['address'] = address;
+        setSearchParams(params);
+        setActionFilter(action);
+        setAddressFilter(address);
+    }
 
     const onOpenPlace = (id) => {
         setPlaceId(id);
@@ -67,8 +126,9 @@ export default function PlacesList({mobile, onShowLocation}) {
 
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="info" sx={{ mx: 1, mb: 1 }}>Скоро здесь появится поиск по городу и типу места.</Alert>
-        {isSuccess && data ? <Masonry columns={{ xs: 1, sm: 2, md: 3, xl: 4 }} spacing={0}>
+        <Box sx={{ p: 1 }}><PlaceFilter mobile={mobile} action={actionFilter} address={addressFilter} onFiltersChanged={onFiltersChanged}/></Box>
+        <Typography gutterBottom variant={mobile ? "h5" : "h4"} component="h1" sx={{ px: 1, mt: 2 }}>{title}</Typography>
+          {isSuccess && data?.results ? <Masonry columns={{ xs: 1, sm: 2, md: 3, xl: Math.max(2, Math.min(4, data.results.length)) }} spacing={0}>
           {data.results.map((place, idx) =>
             <Box key={place.id} sx={{ p: 1 }}>
               <Card sx={{ minWidth: 275 }}>
@@ -83,7 +143,7 @@ export default function PlacesList({mobile, onShowLocation}) {
                     </Typography>}
                   </Stack>
                   <Stack direction="column" spacing={0.5}>
-                    {place.address && <Typography variant="body2">{place.address}</Typography>}
+                    {place.address && <Typography variant="body2"><PostalAddress address={place.address} /></Typography>}
                     {place.phone && <Typography variant="body2">{formatPhoneNumber(place.phone)}</Typography>}
                     {place.claim && <Typography variant="body1">{place.claim}</Typography>}
                     {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}

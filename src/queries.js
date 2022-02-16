@@ -3,21 +3,25 @@
 export const placeKeys = {
     all: ['places'],
     lists: () => [...placeKeys.all, 'list'],
-    list: (kind) => [...placeKeys.lists(), { kind }],
+    list: (kind, address) => [...placeKeys.lists(), { kind, address }],
     details: () => [...placeKeys.all, 'detail'],
     detail: (id) => [...placeKeys.details(), id],
 };
 
+export const locationKeys = {
+    all: ['locations'],
+    lists: () => [...locationKeys.all, 'list'],
+};
+
 export const API = window.location.origin + '/api/v0/';
 
-export function loadPlaces(kind, filters) {
+export function loadPlaces(kind, address) {
     const url = new URL(API + 'places/');
 
-    if (kind !== undefined)
+    if (kind)
         url.searchParams.set('kind', kind);
-    if (filters !== undefined)
-        for (var filter of filters)
-            url.searchParams.append(filter.field, filter.value);
+    if (address)
+        url.searchParams.set('address', address);
     return fetch(url)
         .then(response => {
             if (!response.ok) throw response;
@@ -57,6 +61,16 @@ export function patchPlace(id, data) {
     var body = JSON.stringify({...data, id: id});
 
     return fetch(API + 'places/' + id + '/', {headers, body, method: 'PATCH'})
+        .then(response => {
+            if (!response.ok) throw response;
+            return response.json();
+        });
+};
+
+export function loadLocations() {
+    const url = new URL(API + 'locations/');
+
+    return fetch(url)
         .then(response => {
             if (!response.ok) throw response;
             return response.json();

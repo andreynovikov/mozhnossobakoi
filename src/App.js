@@ -29,7 +29,7 @@ import Help from './Help';
 import './App.css';
 
 
-ReactGA.initialize('G-JGSV7BSDK1');
+ReactGA.initialize('G-JGSV7BSDK1', {gaOptions: { cookieFlags: "SameSite=None;Secure" }});
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -49,7 +49,7 @@ export default function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log('New location:', location.pathname);
+        console.log('New location:', location.pathname + location.search);
     }, [location]);
 
     const onShowLocation = (position) => {
