@@ -14,7 +14,7 @@ import PlaceDrawer from './PlaceDrawer';
 import PlacesLayer from './PlacesLayer';
 import YandexTileLayer from './YandexTileLayer';
 
-import { useStickyState, useDocumentTitle } from './hooks';
+import { useStickyState, useDocumentTitle, useHashParams } from './hooks';
 
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -36,6 +36,16 @@ const DefaultIcon = L.icon({
 });
 
 L.Marker.prototype.options.icon = DefaultIcon;
+
+function getPrecision(zoom) {
+    if (zoom < 2) return 0;
+    if (zoom < 3) return 1;
+    if (zoom < 4) return 2;
+    if (zoom < 6) return 3;
+    if (zoom < 10) return 4;
+    if (zoom < 14) return 5;
+    return 6;
+}
 
 function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange}) {
     useMapEvents({
@@ -71,8 +81,6 @@ export default forwardRef(function Map({mobile}, ref) {
     const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
     const [value, setValue] = useState();
     const [placeId, setPlaceId] = useState(0);
-    const [placeDrawerOpen, setPlaceDrawerOpen] = useState(false);
-    const [newPlaceDrawerOpen, setNewPlaceDrawerOpen] = useState(false);
     const [offset, setOffset] = useState([0, 0]);
     const [position, setPosition] = useState({lat: 0, lng: 0});
 
@@ -80,12 +88,33 @@ export default forwardRef(function Map({mobile}, ref) {
     const newPlaceDrawerRef = useRef();
     const markerRef = useRef();
 
+    const [hashParams, setHashParams] = useHashParams();
+
     useDocumentTitle('#можноссобакой - карта и каталог доступных для посещения с собакой мест');
     const location = useLocation();
 
     useEffect(() => {
         ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Карта мест' });
     }, []);
+
+    useEffect(() => {
+        if (map && hashParams.map) {
+            const coords = hashParams.map.split('/');
+            if (coords.length === 3) {
+                coords[0] = Math.min(19, Math.max(3, Number(coords[0])));
+                coords[1] = Math.min(90, Math.max(-90, Number(coords[1])));
+                coords[2] = Math.min(180, Math.max(-180, Number(coords[2])));
+                map.setView([coords[1], coords[2]], coords[0]);
+            }
+        }
+        if (map && hashParams.map === undefined) {
+            const zoom = map.getZoom();
+            const precision = getPrecision(zoom);
+            const center = map.getCenter();
+            hashParams.map = [zoom, center.lat.toFixed(precision), center.lng.toFixed(precision)].join('/');
+            setHashParams(hashParams, {replace: true});
+        }
+    }, [map, hashParams.map]);
 
     const setValueEx = (v) => {
         setValue(v);
@@ -102,33 +131,52 @@ export default forwardRef(function Map({mobile}, ref) {
         map.setView(location, 18);
     };
 
+    const onMapMoved = (center) => {
+        setMapCenter(center);
+        const zoom = map.getZoom();
+        const precision = getPrecision(zoom);
+        hashParams.map = [zoom, center.lat.toFixed(precision), center.lng.toFixed(precision)].join('/');
+        setHashParams(hashParams, {replace: true});
+    };
+
     const handleAdd = () => {
-        markerRef.current.setPosition(map.getCenter());
-        let offset = undefined;
-        if (mobile) {
-            offset = [0, newPlaceDrawerRef.current.children[0].offsetHeight / 2];
-        } else {
-            offset = [newPlaceDrawerRef.current.children[0].offsetWidth / 2, 0];
-        }
-        setOffset(offset);
-        map.panBy(offset, {animate: true});
-        setNewPlaceDrawerOpen(true);
+        hashParams.place = 'new';
+        setHashParams(hashParams);
     };
 
-    const onPlaceDetails = (id) => {
-        setPlaceId(id);
-        setPlaceDrawerOpen(true);
+    const handlePlaceDetails = (id) => {
+        hashParams.place = id;
+        setHashParams(hashParams);
     };
 
-    const onPlaceDrawerClose = () => {
-        setPlaceDrawerOpen(false);
+    const handleCloseDrawer = () => {
         setPlaceId(0);
+        if (hashParams.place === 'new')
+            map.panBy([-offset[0], -offset[1]], {animate: true});
+        delete hashParams.place;
+        setHashParams(hashParams);
     };
 
-    const onNewPlaceDrawerClose = () => {
-        map.panBy([-offset[0], -offset[1]], {animate: true});
-        setNewPlaceDrawerOpen(false);
-    };
+    useEffect(() => {
+        if (hashParams.place) {
+            if (hashParams.place === 'new') {
+                if (map && markerRef) {
+                    markerRef.current.setPosition(map.getCenter());
+                    let offset = undefined;
+                    if (mobile)
+                        offset = [0, newPlaceDrawerRef.current.children[0].offsetHeight / 2];
+                    else
+                        offset = [newPlaceDrawerRef.current.children[0].offsetWidth / 2, 0];
+                    setOffset(offset);
+                    map.panBy(offset, {animate: true});
+                }
+            } else {
+                const id = parseInt(hashParams.place);
+                if (id > 0)
+                    setPlaceId(id);
+            }
+        }
+    }, [hashParams.place, map, markerRef]);
 
     useImperativeHandle(ref, () => ({
         showLocation,
@@ -138,7 +186,7 @@ export default forwardRef(function Map({mobile}, ref) {
     return (
         <div className="map-container">
           <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} minZoom={3} className="map">
-            <MapEvents onMapMoved={setMapCenter} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
+            <MapEvents onMapMoved={onMapMoved} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
             <LayersControl position="bottomright">
               <LayersControl.BaseLayer checked={tileLayer === 'Yandex Map'} name="Yandex Map">
                 <YandexTileLayer />
@@ -156,12 +204,12 @@ export default forwardRef(function Map({mobile}, ref) {
                 />
               </LayersControl.BaseLayer>
             </LayersControl>
-            {!newPlaceDrawerOpen && <PlacesLayer onPlaceDetails={onPlaceDetails} />}
+            {hashParams.place !== 'new' && <PlacesLayer mobile={mobile} onPlaceDetails={handlePlaceDetails} />}
             <LocateControl options={locateOptions} startDirectly={false} />
-            <DraggableMarker ref={markerRef} visible={newPlaceDrawerOpen} onPositionChange={onPositionChange} />
+            <DraggableMarker ref={markerRef} visible={hashParams.place === 'new'} onPositionChange={onPositionChange} />
           </MapContainer>
 
-          {!newPlaceDrawerOpen && <AddressSuggestions
+          {hashParams.place !== 'new' && <AddressSuggestions
             filterFromBound="country"
             filterToBound="house"
             inputProps={{placeholder: "Введите адрес"}}
@@ -171,9 +219,9 @@ export default forwardRef(function Map({mobile}, ref) {
             onChange={setValueEx} />
           }
 
-          {mobile && <Button variant="contained" onClick={handleAdd} disabled={newPlaceDrawerOpen} className="add-button">Добавить место</Button>}
-          <PlaceDrawer ref={placeDrawerRef} open={placeDrawerOpen} onClose={onPlaceDrawerClose} mobile={mobile} id={placeId} />
-          <NewPlaceDrawer ref={newPlaceDrawerRef} open={newPlaceDrawerOpen} onClose={onNewPlaceDrawerClose} mobile={mobile} position={position} />
+          {mobile && <Button variant="contained" onClick={handleAdd} disabled={hashParams.place === 'new'} className="add-button">Добавить место</Button>}
+          <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} />
+          <NewPlaceDrawer ref={newPlaceDrawerRef} open={hashParams.place === 'new'} onClose={handleCloseDrawer} mobile={mobile} position={position} />
         </div>
     );
 });

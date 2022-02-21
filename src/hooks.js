@@ -52,16 +52,26 @@ export function useDocumentTitle(title) {
     }, [title]);
 }
 
-export function useUrlHash() {
-    const location = useLocation();
-    const hash = useMemo(() => {
-        return location.hash.slice(1);
+export function useHashParams() {
+    let location = useLocation();
+    let hashParams = useMemo(() => {
+        var match,
+        search = /([^&=]+)=?([^&]*)/g,
+        query  = location.hash.slice(1);
+
+        let hashParams = {};
+        while (match = search.exec(query))
+            hashParams[match[1]] = match[2];
+        return hashParams;
     }, [location.hash]);
 
-    const navigate = useNavigate();
-    const setHash = useCallback((nextHash, navigateOptions) => {
-        navigate("#" + nextHash, navigateOptions);
+    let navigate = useNavigate();
+    let setHashParams = useCallback((params, navigateOptions) => {
+        navigate("#" + Object.keys(params).reduce(function(a, k) {
+            a.push(k + '=' + params[k]);
+            return a;
+        }, []).join('&'), navigateOptions);
     }, [navigate]);
 
-    return [hash, setHash];
+    return [hashParams, setHashParams];
 }

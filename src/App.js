@@ -49,7 +49,7 @@ export default function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log('New location:', location.pathname + location.search);
+        console.log('New location:', location.pathname + location.search + location.hash);
     }, [location]);
 
     const onShowLocation = (position) => {
@@ -65,7 +65,8 @@ export default function App() {
     };
 
     const handleAdd = () => {
-        navigate('/');
+        if (location.pathname !== '/')
+            navigate('/');
         new Promise(function (resolve, reject) {
             (function waitForMap() {
                 if (mapRef && mapRef.current) return resolve();
