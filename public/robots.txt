@@ -1,5 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow: /api/
 Sitemap: https://можноссобакой.рф/sitemap.xml
 Host: https://можноссобакой.рф
