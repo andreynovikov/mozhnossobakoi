@@ -23,7 +23,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import './PlacesLayer.css';
 
 
-export default function PlacesLayer({onPlaceDetails}) {
+export default function PlacesLayer({mobile, onPlaceDetails}) {
     const [placeId, setPlaceId] = useState(0);
     const [marker, setMarker] = useState(0);
 
@@ -68,10 +68,7 @@ export default function PlacesLayer({onPlaceDetails}) {
                   </Box>,
                   container
                 );
-                marker.bindPopup(container, {
-                    minWidth: 300,
-                    maxWidth: 450
-                });
+                marker.bindPopup(container, mobile ? undefined : { maxWidth: 450 });
             }
             setTimeout(() => marker.openPopup(), 100);
         }
