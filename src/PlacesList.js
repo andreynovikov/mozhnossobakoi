@@ -128,17 +128,19 @@ export default function PlacesList({mobile, onShowLocation}) {
       <Box sx={{ p: 2 }}>
         <Box sx={{ p: 1 }}><PlaceFilter mobile={mobile} action={actionFilter} address={addressFilter} onFiltersChanged={onFiltersChanged}/></Box>
         <Typography gutterBottom variant={mobile ? "h5" : "h4"} component="h1" sx={{ px: 1, mt: 2 }}>{title}</Typography>
-          {isSuccess && data?.results ? <Masonry columns={{ xs: 1, sm: 2, md: 3, xl: Math.max(2, Math.min(4, data.results.length)) }} spacing={0}>
+          {isSuccess && data?.results ? <Masonry columns={{ m: 1, md: 2, lg: Math.max(2, Math.min(3, data.results.length)), xl: Math.max(2, Math.min(4, data.results.length)) }} spacing={0}>
           {data.results.map((place, idx) =>
             <Box key={place.id} sx={{ p: 1 }}>
               <Card sx={{ minWidth: 275 }}>
                 <CardContent>
-                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={0.5}>
-                    <Typography gutterBottom variant="h6" component="div">
-                      <PlaceIcon kind={place.kind} fontSize="small" color={place.claimed ? "success" : "primary"} style={{ verticalAlign: 'text-top', display: 'inline-flex' }} sx={{ mr: 0.5 }} />
-                      {place.name}
-                    </Typography>
-                    {place.last_seen && moment(place.last_seen).isAfter('0001-01-01') && <Typography sx={{ mb: 1.5 }} variant="caption" color="text.secondary">
+                  <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1} sx={{ mb: 1 }}>
+                    <Stack direction="row" alignItems="baseline" spacing={0.5}>
+                      <PlaceIcon kind={place.kind} fontSize="small" color={place.claimed ? "success" : "primary"} style={{ verticalAlign: "text-top" }} />
+                      <Typography variant="h6" component="div">
+                        {place.name}
+                      </Typography>
+                    </Stack>
+                    {place.last_seen && moment(place.last_seen).isAfter('0001-01-01') && <Typography sx={{ mb: 1.5, textAlign: "end" }} variant="caption" color="text.secondary">
                       {moment(place.last_seen).format('MMMM YYYY')}
                     </Typography>}
                   </Stack>
@@ -146,17 +148,19 @@ export default function PlacesList({mobile, onShowLocation}) {
                     {place.address && <Typography variant="body2"><PostalAddress address={place.address} /></Typography>}
                     {place.phone && <Typography variant="body2">{formatPhoneNumber(place.phone)}</Typography>}
                     {place.claim && <Typography variant="body1">{place.claim}</Typography>}
-                    {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}
+                      {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url.replace(/https?:\/\//, '')}</Link>}
                   </Stack>
                 </CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-end" spacing={0.5}>
-                  <CardActions>
+                  <CardActions disableSpacing sx={{ flexWrap: "wrap" }}>
                     <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
-                    <Button size="small" onClick={() => onShowLocation(place.position)}>Показать на карте</Button>
+                    <Button size="small" onClick={() => onShowLocation(place.position)}>Показать&nbsp;на&nbsp;карте</Button>
                   </CardActions>
-                  <Stack direction="row" spacing={0.5} sx={{ p: 1 }}>
-                    {place.telegram && <SocialIcon url={`https://telegram.me/${place.telegram}`} target="_blank" style={{ height: 22, width: 22 }} />}
-                    {place.instagram && <SocialIcon url={`https://instagram.com/${place.instagram}`} target="_blank" style={{ height: 22, width: 22 }} />}
+                  <Stack direction="row" sx={{ flexWrap: "wrap", justifyContent: "flex-end", p: 0.5 }}>
+                    {place.vk && <SocialIcon url={place.vk} target="_blank" style={{ height: 22, width: 22, margin: 2 }} />}
+                    {place.facebook && <SocialIcon url={place.facebook} target="_blank" style={{ height: 22, width: 22, margin: 2 }} />}
+                    {place.telegram && <SocialIcon url={`https://telegram.me/${place.telegram}`} target="_blank" style={{ height: 22, width: 22, margin: 2 }} />}
+                    {place.instagram && <SocialIcon url={`https://instagram.com/${place.instagram}`} target="_blank" style={{ height: 22, width: 22, margin: 2 }} />}
                   </Stack>
                 </Stack>
               </Card>

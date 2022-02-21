@@ -66,9 +66,11 @@ export default function Place({id, mobile}) {
             <Stack direction="column" spacing={0.5}>
               {place.address && <Typography variant="body2">{place.address}</Typography>}
               {place.phone && <Link variant="caption" underline="none" href={`tel:${place.phone}`} target="_blank" className="phone-link">{formatPhoneNumber(place.phone)}</Link>}
-              {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url}</Link>}
+              {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url.replace(/https?:\/\//, '')}</Link>}
             </Stack>
             <Stack direction="column" spacing={0.5}>
+              {place.vk && <SocialIcon url={place.vk} target="_blank" style={{ height: 22, width: 22 }} />}
+              {place.facebook && <SocialIcon url={place.facebook} target="_blank" style={{ height: 22, width: 22 }} />}
               {place.telegram && <SocialIcon url={`https://telegram.me/${place.telegram}`} target="_blank" style={{ height: 22, width: 22 }} />}
               {place.instagram && <SocialIcon url={`https://instagram.com/${place.instagram}`} target="_blank" style={{ height: 22, width: 22 }} />}
             </Stack>
