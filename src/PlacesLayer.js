@@ -73,7 +73,7 @@ export default function PlacesLayer({onPlaceDetails}) {
                     maxWidth: 450
                 });
             }
-            marker.openPopup();
+            setTimeout(() => marker.openPopup(), 100);
         }
     }, [place, marker, placeId, isPlaceSuccess]);
 
