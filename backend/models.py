@@ -43,6 +43,7 @@ class Place(BaseModel):
     longitude = FloatField()
     visible = BooleanField(default=True, index=True)
     last_seen = DateField()
+    announced = DateField(null=True)
     claimed = DateField(null=True)
     claim = TextField(null=True)
     address = CharField(null=True)
@@ -50,6 +51,8 @@ class Place(BaseModel):
     url = CharField(null=True)
     instagram = CharField(null=True)
     telegram = CharField(null=True)
+    facebook = CharField(null=True)
+    vk = CharField(null=True)
 
     @property
     def serialize_list(self):
@@ -68,7 +71,9 @@ class Place(BaseModel):
             'phone': self.phone,
             'url': self.url,
             'instagram': self.instagram,
-            'telegram': self.telegram
+            'telegram': self.telegram,
+            'facebook': self.facebook,
+            'vk': self.vk
         }
         return data
 
@@ -83,7 +88,9 @@ class Place(BaseModel):
 def on_place_save(model_class, instance, created):
     last_seen = [date.min]
     if instance.reviews:
-        last_seen.append(instance.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc())[0].visited_date)
+        latest_review = instance.reviews.where(Review.is_published == True).order_by(Review.visited_date.desc()).first()
+        if latest_review is not None:
+            last_seen.append(latest_review.visited_date)
     if instance.claimed:
         last_seen.append(instance.claimed)
     instance.last_seen = max(last_seen)
@@ -131,6 +138,6 @@ def on_review_save(model_class, instance, created):
 
 
 @post_delete(sender=Review)
-def on_review_delete(model_class, instance, created):
+def on_review_delete(model_class, instance):
     # re-save place to update last_seen property
     instance.place.save()

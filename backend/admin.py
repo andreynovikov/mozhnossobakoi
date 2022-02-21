@@ -24,7 +24,7 @@ CustomModelConverter.defaults[InetField] = wt_fields.StringField
 class PlaceAdmin(ModelView):
     column_list = ['kind', 'name', 'visible', 'last_seen', 'claimed', 'address', 'url']
     column_searchable_list = ['name', 'address']
-    column_filters = ['kind', 'visible', 'claimed']
+    column_filters = ['kind', 'visible', 'claimed', 'announced']
     column_display_pk = False
     column_default_sort = ('id', True)
     list_template = 'admin/place_list.html'
@@ -52,6 +52,12 @@ class PlaceAdmin(ModelView):
             'style': 'width: 98%'
         },
         'url': {
+            'style': 'min-width: 50%'
+        },
+        'facebook': {
+            'style': 'min-width: 50%'
+        },
+        'vk': {
             'style': 'min-width: 50%'
         }
     }
