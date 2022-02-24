@@ -26,6 +26,8 @@ const kindIcons = {
     "other": HomeWorkIcon
 };
 
+export const kinds =  Object.keys(kindIcons);
+
 export default function PlaceIcon(props) {
     const StyledIcon = styled(kindIcons[props.kind] || kindIcons["other"])(props.style || {});
     return <StyledIcon {...props} />;

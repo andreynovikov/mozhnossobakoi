@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 import { useQuery } from 'react-query';
-import { Marker } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 
 import L from 'leaflet';
@@ -17,6 +16,7 @@ import {
 } from './queries';
 
 import PlaceIcon from './PlaceIcon';
+import PlaceMarker from './PlaceMarker';
 
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -95,8 +95,8 @@ export default function PlacesLayer({mobile, onPlaceDetails}) {
     return (
         isSuccess && data ? (
           <MarkerClusterGroup showCoverageOnHover={false}>
-            {data.results.map((marker, idx) =>
-              <Marker key={`marker-${idx}`} position={marker.position} eventHandlers={{ click: (e) => handleMarkerClick(e, marker.id) }} />
+            {data.results.map((place, idx) =>
+              <PlaceMarker key={`marker-${idx}`} kind={place.kind} claimed={place.claimed} position={place.position} eventHandlers={{ click: (e) => handleMarkerClick(e, place.id) }} />
             )}
           </MarkerClusterGroup>
         ) : null

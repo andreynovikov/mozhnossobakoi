@@ -1,6 +1,9 @@
 import { useState, useMemo, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Marker } from 'react-leaflet';
 
+import { placeAddMarkerIcon } from './PlaceMarker';
+
+
 export default forwardRef(function DraggableMarker({visible, onPositionChange}, ref) {
     const [position, setPosition] = useState({ lat: 0, lng: 0 });
     const markerRef = useRef(null);
@@ -29,6 +32,7 @@ export default forwardRef(function DraggableMarker({visible, onPositionChange}, 
         visible ?
           <Marker
             draggable
+            icon={placeAddMarkerIcon}
             eventHandlers={eventHandlers}
             position={position}
             ref={markerRef} />
