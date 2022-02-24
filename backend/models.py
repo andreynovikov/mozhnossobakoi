@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, date
 
 from playhouse.signals import Model, pre_save, post_save, post_delete
-from peewee import Field, BooleanField, CharField, DateField, DateTimeField, FloatField, ForeignKeyField, TextField
+from peewee import Field, BooleanField, CharField, DateField, DateTimeField, FloatField, ForeignKeyField, IntegerField, TextField
 
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Range
@@ -116,19 +116,36 @@ class Review(BaseModel):
     place = ForeignKeyField(Place, backref='reviews')
     message = TextField()
     source = CharField(null=True)
+    rating = IntegerField(default=0)
     created_date = DateTimeField(default=datetime.now)
     visited_date = DateField()
     is_published = BooleanField(default=True, index=True)
     ip = InetField()
 
+    @staticmethod
+    def map_rating(rating):
+        if rating == 'good':
+            return 5
+        elif rating == 'bad':
+            return -2
+        else:
+            return 0
+
     @property
     def serialize(self):
         return {
             'id': self.id,
+            'rating': self.rating,
             'message': self.message,
             'created': self.created_date.isoformat(timespec='seconds'),
             'visited': self.visited_date.isoformat()
         }
+
+
+class ReviewCreateSchema(Schema):
+    message = fields.Str(required=True, validate=Length(max=10000))
+    rating = fields.Str(required=False, validate=Length(max=5))
+    visited = fields.Date(required=False, load_default=datetime.now())
 
 
 @post_save(sender=Review)

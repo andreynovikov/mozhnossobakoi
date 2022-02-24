@@ -1,17 +1,20 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation } from 'react-router-dom';
 
 import ReactGA from 'react-ga4';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
 import { SocialIcon } from 'react-social-icons';
 
@@ -24,12 +27,15 @@ import {
 } from './queries';
 
 import PlaceIcon from './PlaceIcon';
+import PlaceReviewForm from './PlaceReviewForm';
 import { formatPhoneNumber } from './utils';
 
 import './Place.css';
 
 
 export default function Place({id, mobile}) {
+    const [reviewMode, setReviewMode] = useState(false);
+
     const location = useLocation();
 
     const {data: place, isSuccess} = useQuery(
@@ -54,7 +60,7 @@ export default function Place({id, mobile}) {
 
           <Stack direction="row" alignItems="baseline" spacing={1} sx={{mb:2 }}>
             <PlaceIcon kind={place.kind} fontSize="large" color={place.claimed ? "success" : "primary"} />
-            <Typography variant={ mobile ? "h5" : id ? "h3" : "h1"} component="h1">
+            <Typography variant={ mobile ? "h5" : id ? "h3" : "h1"} component="h2">
               {place.name}
               {place.last_seen && moment(place.last_seen).isAfter('0001-01-01') && <Typography variant="caption" component="div" color="text.secondary">
                 {moment(place.last_seen).format('MMMM YYYY')}
@@ -78,20 +84,30 @@ export default function Place({id, mobile}) {
 
           {place.claim && <Typography variant="body1" gutterBottom>{place.claim}</Typography>}
 
+          {reviewMode ?
+            <PlaceReviewForm placeId={place.id} mobile={mobile} onClose={() => setReviewMode(false)} />
+          :
+            <Button variant="outlined" size={mobile ? "small" : "medium"} sx={{my: 1.5}} onClick={() => setReviewMode(true)}>
+              Оставить отзыв
+            </Button>
+          }
 
-          {place.reviews.length > 0 && <Grid container spacing={2} sx={{ my: 1 }}>
+          {place.reviews.length > 0 && <Grid container direction={mobile ? "column" : "row"} spacing={2} sx={{ my: 1 }}>
             {place.reviews.map((review, idx) =>
               <Grid item key={review.id}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="body1" gutterBottom>
-                      &laquo;{review.message}&raquo;
-                    </Typography>
-                    <Typography sx={{ display: 'flex', justifyContent: 'flex-end' }} variant="caption" color="text.secondary">
-                      {moment(review.visited).format('MMMM YYYY')}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                <Paper sx={{p: 1, minWidth: 200, maxWidth: mobile ? "inherit" : 320}}>
+                  <Typography variant="body1" gutterBottom>
+                    { review.rating > 0 ?
+                      <ThumbUpOffAltIcon color="success" fontSize="small" sx={{float: "right", ml: 1, mb: 1}} />
+                    : review.rating < 0 ?
+                      <ThumbDownOffAltIcon color="error" fontSize="small" sx={{float: "right", ml: 1, mb: 1}} />
+                    : null }
+                    &laquo;{review.message}&raquo;
+                  </Typography>
+                  <Typography sx={{ display: 'flex', justifyContent: 'flex-end' }} variant="caption" color="text.secondary">
+                    {moment(review.visited).format('MMMM YYYY')}
+                  </Typography>
+                </Paper>
               </Grid>
             )}
           </Grid>}

@@ -8,6 +8,12 @@ export const placeKeys = {
     detail: (id) => [...placeKeys.details(), id],
 };
 
+export const reviewKeys = {
+    all: ['reviews'],
+    lists: () => [...reviewKeys.all, 'list'],
+    list: (place) => [...reviewKeys.lists(), { place }],
+};
+
 export const locationKeys = {
     all: ['locations'],
     lists: () => [...locationKeys.all, 'list'],
@@ -61,6 +67,21 @@ export function patchPlace(id, data) {
     var body = JSON.stringify({...data, id: id});
 
     return fetch(API + 'places/' + id + '/', {headers, body, method: 'PATCH'})
+        .then(response => {
+            if (!response.ok) throw response;
+            return response.json();
+        });
+};
+
+export function createReview(place, data) {
+    var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        //'X-CSRFTOKEN': cookie.load('csrftoken')
+    }
+    var body = JSON.stringify(data);
+
+    return fetch(API + 'places/' + place + '/reviews/', {headers, body, method: 'POST'})
         .then(response => {
             if (!response.ok) throw response;
             return response.json();

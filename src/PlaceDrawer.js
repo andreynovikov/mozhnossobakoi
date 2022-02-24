@@ -14,7 +14,7 @@ export default forwardRef(function PlaceDrawer({open, onClose, mobile, id}, ref)
             open={open}
             onClose={onClose}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
-            <CloseIcon onClick={onClose} fontSize="large" style={{ cursor: "pointer" }} />
+            <CloseIcon onClick={onClose} fontSize={mobile ? "medium" : "large"} style={{ cursor: "pointer" }} />
           </Box>
           <Box sx={{ px: 2, minWidth: mobile ? "inherit" : 400, maxWidth: { sm: mobile ? "inherit" : 500, md: mobile ? "inherit" : 700}, maxHeight: mobile ? "70vh" : "inherit" }}>
             <Place id={id} mobile={mobile} />

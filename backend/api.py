@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from flask import abort, jsonify, request
 from marshmallow import ValidationError
-from peewee import DoesNotExist, PeeweeException
+from peewee import DoesNotExist, IntegrityError, PeeweeException
 
 from app import app
 from models import *
@@ -69,7 +69,7 @@ def create_place():
     except ValidationError as e:
         app.logger.error(e.messages)
         return jsonify(e.messages), 400
-    except peewee.IntegrityError as e:
+    except IntegrityError as e:
         app.logger.error(str(e))
 
 @app.route('/api/v0/places/<place_id>/', methods=['GET'])
@@ -77,6 +77,32 @@ def retrive_place(place_id):
     try:
         place = Place.get(Place.id == place_id)
         return place.serialize
+    except DoesNotExist:
+        abort(404, description="Place not found")
+
+@app.route('/api/v0/places/<place_id>/reviews/', methods=['POST'])
+def create_review(place_id):
+    app.logger.info('payload: %s', str(request.json))
+
+    schema = ReviewCreateSchema()
+    try:
+        data = schema.load(request.json)
+        app.logger.info('result: %s', str(data))
+        place = Place.get(Place.id == place_id)
+        data['place'] = place
+        data['rating'] = Review.map_rating(data['rating'])
+        data['visited_date'] = data['visited']
+        data['ip'] = request.remote_addr
+
+        review = Review.create(**data)
+
+        return review.serialize
+
+    except ValidationError as e:
+        app.logger.error(e.messages)
+        return jsonify(e.messages), 400
+    except IntegrityError as e:
+        app.logger.error(str(e))
     except DoesNotExist:
         abort(404, description="Place not found")
 

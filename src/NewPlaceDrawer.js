@@ -62,7 +62,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
         const data = {
             kind: kind,
             name: name,
-            description: description,
+            description: description.trim(),
             position: position,
             visited: visited?.date(1).format('YYYY-MM-DD')
         };
