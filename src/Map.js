@@ -6,6 +6,11 @@ import { AddressSuggestions } from 'react-dadata';
 import ReactGA from 'react-ga4';
 
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 import DraggableMarker from './DraggableMarker';
 import LocateControl from './LocateControl';
@@ -24,6 +29,7 @@ import 'leaflet/dist/leaflet.css';
 import 'react-dadata/dist/react-dadata.css';
 
 import './Map.css';
+
 
 const DefaultIcon = L.icon({
     iconUrl: icon,
@@ -63,26 +69,15 @@ function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange}) {
 }
 
 export default forwardRef(function Map({mobile}, ref) {
-    const locateOptions = {
-        position: 'topleft',
-        setView: 'untilPan',
-        keepCurrentZoomLevel: true,
-        flyTo: true,
-        showPopup: false,
-        strings: {
-            title: 'Определить текущее местоположение'
-        },
-        onActivate: () => {} // callback before engine starts retrieving locations
-    }
-
     const [map, setMap] = useState(null);
-    const [mapCenter, setMapCenter] = useStickyState([59.950240, 30.317502], "mapCenter");
+    const [mapCenter, setMapCenter] = useStickyState({lat: 59.950240, lng: 30.317502}, "mapCenter");
     const [mapZoom, setMapZoom] = useStickyState(15, "mapZoom");
     const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
     const [value, setValue] = useState();
     const [placeId, setPlaceId] = useState(0);
     const [offset, setOffset] = useState([0, 0]);
     const [position, setPosition] = useState({lat: 0, lng: 0});
+    const [locationErrorOpen, setLocationErrorOpen] = useState(false);
 
     const placeDrawerRef = useRef();
     const newPlaceDrawerRef = useRef();
@@ -123,6 +118,10 @@ export default forwardRef(function Map({mobile}, ref) {
         }
     };
 
+	const onLocationError = (err, control) => {
+		setLocationErrorOpen(true);
+	}
+
     const onPositionChange = (pos) => {
         setPosition(pos);
     };
@@ -132,6 +131,8 @@ export default forwardRef(function Map({mobile}, ref) {
     };
 
     const onMapMoved = (center) => {
+        if (mapCenter.lat === center.lat && mapCenter.lng === center.lng) // leaflet fires 'moveend' event twice
+            return;
         setMapCenter(center);
         const zoom = map.getZoom();
         const precision = getPrecision(zoom);
@@ -156,6 +157,19 @@ export default forwardRef(function Map({mobile}, ref) {
         delete hashParams.place;
         setHashParams(hashParams);
     };
+
+    const locateOptions = {
+        position: 'topleft',
+        setView: 'untilPan',
+        keepCurrentZoomLevel: true,
+        flyTo: true,
+        showPopup: false,
+        strings: {
+            title: 'Определить текущее местоположение'
+        },
+        onLocationError,
+        onActivate: () => {} // callback before engine starts retrieving locations
+    }
 
     useEffect(() => {
         if (hashParams.place) {
@@ -222,6 +236,22 @@ export default forwardRef(function Map({mobile}, ref) {
           {mobile && <Button variant="contained" onClick={handleAdd} disabled={hashParams.place === 'new'} className="add-button">Добавить место</Button>}
           <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} />
           <NewPlaceDrawer ref={newPlaceDrawerRef} open={hashParams.place === 'new'} onClose={handleCloseDrawer} mobile={mobile} position={position} />
+
+          <Dialog open={locationErrorOpen} onClose={() => setLocationErrorOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+            <DialogTitle id="alert-dialog-title">
+              Невозможно определить, где вы находитесь
+            </DialogTitle>
+            <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Скорее всего необходимо разрешение определять ваше местоположение: это делается в настройках устройства или браузера.
+            </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setLocationErrorOpen(false)}>Не сейчас</Button>
+              <Button href="https://yandex.ru/support/common/browsers-settings/geolocation.html" target="_blank" autoFocus onClick={() => setLocationErrorOpen(false)}>Посмотреть инструкцию</Button>
+            </DialogActions>
+          </Dialog>
+
         </div>
     );
 });

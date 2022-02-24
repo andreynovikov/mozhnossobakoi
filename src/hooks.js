@@ -68,7 +68,7 @@ export function useHashParams() {
     let navigate = useNavigate();
     let setHashParams = useCallback((params, navigateOptions) => {
         navigate("#" + Object.keys(params).reduce(function(a, k) {
-            a.push(k + '=' + params[k]);
+            a.push(k + '=' + params[k]); // we intentionally do not encode parameters as we want them to be human readable
             return a;
         }, []).join('&'), navigateOptions);
     }, [navigate]);
