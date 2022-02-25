@@ -78,7 +78,7 @@ export default function PlacesList({mobile, onShowLocation}) {
         setAddressFilter(searchParams.get('address'));
     }, [searchParams]);
 
-    const {data, isSuccess} = useQuery(
+    const {data, isSuccess, isFetching} = useQuery(
         placeKeys.list(actionFilter, addressFilter),
         () => loadPlaces(actionFilter, addressFilter),
         {
@@ -89,6 +89,10 @@ export default function PlacesList({mobile, onShowLocation}) {
     );
 
     useEffect(() => {
+        if (!isFetching && data?.results?.length === 0) {
+            setTitle("К сожалению, нет мест, удовлетворяющих выбранным критериям. Попробуйте изменить фильтры.");
+            return;
+        }
         var title = 'Места';
         if (actionFilter) {
             title += ', где ' + humanizeAction(actionFilter);
@@ -100,7 +104,7 @@ export default function PlacesList({mobile, onShowLocation}) {
         title += ', куда можно с собакой';
         setTitle(title);
         ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: title }); // we place it here to send correct page title
-    }, [actionFilter, addressFilter]);
+    }, [actionFilter, addressFilter, isFetching, data]);
 
     const onFiltersChanged = (action, address) => {
         console.log('action changed:', action);
