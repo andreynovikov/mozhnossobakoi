@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MapContainer, LayersControl, TileLayer, useMapEvents } from 'react-leaflet';
+import { Circle, MapContainer, LayersControl, TileLayer, useMapEvents } from 'react-leaflet';
 
 import { AddressSuggestions } from 'react-dadata';
 import ReactGA from 'react-ga4';
+
+import useTheme from '@mui/material/styles/useTheme';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -18,30 +21,15 @@ import NewPlaceDrawer from './NewPlaceDrawer';
 import PlaceDrawer from './PlaceDrawer';
 import PlacesLayer from './PlacesLayer';
 import YandexTileLayer from './YandexTileLayer';
+import { kinds } from './PlaceIcon';
 
 import { useStickyState, useDocumentTitle, useHashParams } from './hooks';
-
-import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 import 'leaflet/dist/leaflet.css';
 import 'react-dadata/dist/react-dadata.css';
 
 import './Map.css';
 
-
-const DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12,41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-    tooltipAnchor: [16, -28]
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
 
 function getPrecision(zoom) {
     if (zoom < 2) return 0;
@@ -53,7 +41,7 @@ function getPrecision(zoom) {
     return 6;
 }
 
-function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange}) {
+function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange, onFilterChange}) {
     useMapEvents({
         moveend: (e) => {
             onMapMoved(e.target.getCenter());
@@ -63,6 +51,12 @@ function MapEvents({onMapMoved, onMapZoomed, onBaseLayerChange}) {
         },
         baselayerchange: (e) => {
             onBaseLayerChange(e.name);
+        },
+        overlayadd: (e) => {
+            onFilterChange(e.name, true);
+        },
+        overlayremove: (e) => {
+            onFilterChange(e.name, false);
         }
     });
     return null;
@@ -73,15 +67,20 @@ export default forwardRef(function Map({mobile}, ref) {
     const [mapCenter, setMapCenter] = useStickyState({lat: 59.950240, lng: 30.317502}, "mapCenter");
     const [mapZoom, setMapZoom] = useStickyState(15, "mapZoom");
     const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
+    const [filter, setFilter] = useStickyState(kinds, 'kindFilter');
     const [value, setValue] = useState();
     const [placeId, setPlaceId] = useState(0);
     const [offset, setOffset] = useState([0, 0]);
     const [position, setPosition] = useState({lat: 0, lng: 0});
     const [locationErrorOpen, setLocationErrorOpen] = useState(false);
+    const [filterErrorOpen, setFilterErrorOpen] = useState(false);
 
     const placeDrawerRef = useRef();
     const newPlaceDrawerRef = useRef();
     const markerRef = useRef();
+
+    const theme = useTheme();
+    const mobileLayout = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
 
     const [hashParams, setHashParams] = useHashParams();
 
@@ -91,6 +90,11 @@ export default forwardRef(function Map({mobile}, ref) {
     useEffect(() => {
         ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Карта мест' });
     }, []);
+
+    useEffect(() => {
+        if (map)
+            map.attributionControl.setPosition('bottomleft');
+    }, [map]);
 
     useEffect(() => {
         if (map && hashParams.map) {
@@ -110,6 +114,10 @@ export default forwardRef(function Map({mobile}, ref) {
             setHashParams(hashParams, {replace: true});
         }
     }, [map, hashParams.map]);
+
+    useEffect(() => {
+        setFilterErrorOpen(filter.length === 1);
+    }, [filter]);
 
     const setValueEx = (v) => {
         setValue(v);
@@ -138,6 +146,25 @@ export default forwardRef(function Map({mobile}, ref) {
         const precision = getPrecision(zoom);
         hashParams.map = [zoom, center.lat.toFixed(precision), center.lng.toFixed(precision)].join('/');
         setHashParams(hashParams, {replace: true});
+    };
+
+    const onFilterChange = (name, checked) => {
+        const map = {
+            "Пожить на природе": 'camp',
+            "Переночевать": 'hotel',
+            "Поесть": 'cafe',
+            "Купить": 'shop',
+            "Погулять": 'park',
+            "Другое": 'other'
+        };
+        const kind = map[name];
+        const f = [...filter];
+        const index = f.indexOf(kind);
+        if (checked && index < 0)
+            f.push(kind);
+        if (!checked && index !== -1)
+            f.splice(index, 1);
+        setFilter(f);
     };
 
     const handleAdd = () => {
@@ -199,9 +226,9 @@ export default forwardRef(function Map({mobile}, ref) {
 
     return (
         <div className="map-container">
-          <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} minZoom={3} className="map">
-            <MapEvents onMapMoved={onMapMoved} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
-            <LayersControl position="bottomright">
+          <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} minZoom={3} worldCopyJump={true} className="map">
+              <MapEvents onMapMoved={onMapMoved} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} onFilterChange={onFilterChange} />
+            <LayersControl position="topleft">
               <LayersControl.BaseLayer checked={tileLayer === 'Yandex Map'} name="Yandex Map">
                 <YandexTileLayer />
               </LayersControl.BaseLayer>
@@ -213,12 +240,29 @@ export default forwardRef(function Map({mobile}, ref) {
               </LayersControl.BaseLayer>
               <LayersControl.BaseLayer checked={tileLayer === 'Stadia Maps'} name="Stadia Maps">
                 <TileLayer
-                  attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+                  attribution='&copy; <a href="https://stadiamaps.com">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org">OpenMapTiles</a> &copy; <a href="https://osm.org">OpenStreetMap</a> contributors'
                   url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
                 />
               </LayersControl.BaseLayer>
+              <LayersControl.Overlay checked={filter.includes('camp')} name="Пожить на природе">
+                <Circle center={[0,0]} radius={0} stroke={false} fill={false} />
+              </LayersControl.Overlay>
+              <LayersControl.Overlay checked={filter.includes('hotel')} name="Переночевать">
+                <Circle center={[0,0]} radius={0} stroke={false} fill={false} />
+              </LayersControl.Overlay>
+              <LayersControl.Overlay checked={filter.includes('cafe')} name="Поесть">
+                <Circle center={[0,0]} radius={0} stroke={false} fill={false} />
+              </LayersControl.Overlay>
+              <LayersControl.Overlay checked={filter.includes('shop')} name="Купить">
+                <Circle center={[0,0]} radius={0} stroke={false} fill={false} />
+              </LayersControl.Overlay>
+              <LayersControl.Overlay checked={filter.includes('park')} name="Погулять">
+                <Circle center={[0,0]} radius={0} stroke={false} fill={false} />
+              </LayersControl.Overlay>
+              <LayersControl.Overlay checked={filter.includes('other')} name="Другое">
+              </LayersControl.Overlay>
             </LayersControl>
-            {hashParams.place !== 'new' && <PlacesLayer mobile={mobile} onPlaceDetails={handlePlaceDetails} />}
+            {hashParams.place !== 'new' && <PlacesLayer mobile={mobile} kindFilter={filter} onPlaceDetails={handlePlaceDetails} />}
             <LocateControl options={locateOptions} startDirectly={false} />
             <DraggableMarker ref={markerRef} visible={hashParams.place === 'new'} onPositionChange={onPositionChange} />
           </MapContainer>
@@ -233,22 +277,33 @@ export default forwardRef(function Map({mobile}, ref) {
             onChange={setValueEx} />
           }
 
-          {mobile && <Button variant="contained" onClick={handleAdd} disabled={hashParams.place === 'new'} className="add-button">Добавить место</Button>}
+          {mobileLayout && hashParams.place !== 'new' && <Button variant="contained" onClick={handleAdd} className="add-button">Добавить место</Button>}
           <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} />
           <NewPlaceDrawer ref={newPlaceDrawerRef} open={hashParams.place === 'new'} onClose={handleCloseDrawer} mobile={mobile} position={position} />
 
-          <Dialog open={locationErrorOpen} onClose={() => setLocationErrorOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-            <DialogTitle id="alert-dialog-title">
+          <Dialog open={locationErrorOpen} onClose={() => setLocationErrorOpen(false)} aria-labelledby="location-dialog-title" aria-describedby="location-dialog-description">
+            <DialogTitle id="location-dialog-title">
               Невозможно определить, где вы находитесь
             </DialogTitle>
             <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              Скорее всего необходимо разрешение определять ваше местоположение: это делается в настройках устройства или браузера.
-            </DialogContentText>
+              <DialogContentText id="location-dialog-description">
+                Скорее всего необходимо разрешение определять ваше местоположение: это делается в настройках устройства или браузера.
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setLocationErrorOpen(false)}>Не сейчас</Button>
               <Button href="https://yandex.ru/support/common/browsers-settings/geolocation.html" target="_blank" autoFocus onClick={() => setLocationErrorOpen(false)}>Посмотреть инструкцию</Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog open={filterErrorOpen} onClose={() => setFilterErrorOpen(false)} aria-labelledby="alert-dialog-title" aria-describedby="filter-dialog-description">
+            <DialogContent>
+              <DialogContentText id="filter-dialog-description">
+                Вы отключили все типы мест, ничего не будет отображаться на карте, пока вы не выберите хотя бы один тип.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={() => setFilterErrorOpen(false)}>Понятно</Button>
             </DialogActions>
           </Dialog>
 

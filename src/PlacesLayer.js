@@ -15,7 +15,7 @@ import {
     loadPlace,
 } from './queries';
 
-import PlaceIcon from './PlaceIcon';
+import PlaceIcon, { kinds } from './PlaceIcon';
 import PlaceMarker from './PlaceMarker';
 
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -23,13 +23,13 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import './PlacesLayer.css';
 
 
-export default function PlacesLayer({mobile, onPlaceDetails}) {
+export default function PlacesLayer({mobile, kindFilter, onPlaceDetails}) {
     const [placeId, setPlaceId] = useState(0);
     const [marker, setMarker] = useState(0);
 
     const {data, isSuccess} = useQuery(
-        placeKeys.list(),
-        () => loadPlaces(),
+        placeKeys.list(kindFilter.length !== kinds.length ? kindFilter : undefined),
+        () => loadPlaces(kindFilter.length !== kinds.length ? kindFilter : undefined),
         {
             onError: (error) => {
                 console.error(error);
