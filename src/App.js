@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { QueryClient, QueryClientProvider, useIsFetching } from 'react-query';
+import { QueryClient, QueryClientProvider, QueryCache, useIsFetching } from 'react-query';
 import { Outlet, Routes, Route, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 import ReactGA from 'react-ga4';
@@ -7,6 +7,7 @@ import ReactGA from 'react-ga4';
 import useTheme from '@mui/material/styles/useTheme';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -14,6 +15,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 
 import PetsIcon from '@mui/icons-material/Pets';
@@ -32,16 +34,23 @@ import './App.css';
 
 ReactGA.initialize('G-JGSV7BSDK1', {gaOptions: { cookieFlags: "SameSite=None;Secure" }});
 
-const queryClient = new QueryClient({
-    defaultOptions: {
-        queries: {
-            refetchOnWindowFocus: false,
-            staleTime: Infinity
-        },
-    },
-});
-
 export default function App() {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [queryClient] = useState(() => new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: false,
+                staleTime: Infinity
+            },
+        },
+        queryCache: new QueryCache({
+            onError: (error) => {
+                console.log(error);
+                setSnackbarOpen(true);
+            },
+        }),
+    }));
+
     const theme = useTheme();
     const mobile = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
 
@@ -78,6 +87,12 @@ export default function App() {
         });
     };
 
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway')
+            return;
+        setSnackbarOpen(false);
+    };
+
     return (
       <QueryClientProvider client={queryClient}>
         <Routes>
@@ -89,6 +104,11 @@ export default function App() {
             <Route path="about" element={<About mobile={mobile} />} />
           </Route>
         </Routes>
+        <Snackbar open={snackbarOpen} autoHideDuration={10000} onClose={handleSnackbarClose}>
+          <Alert onClose={handleSnackbarClose} elevation={6} variant="filled" severity="error" sx={{ width: '100%' }}>
+            Проблема с загрузкой данных
+          </Alert>
+        </Snackbar>
       </QueryClientProvider>
     );
 }
