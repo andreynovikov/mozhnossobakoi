@@ -125,7 +125,7 @@ export default function PlacesList({mobile, onShowLocation}) {
     };
 
     return (
-      <Box sx={{ p: 2 }}>
+      <Box sx={{ p: 2, position: "relative", overflow: "auto" }}>
         <Box sx={{ p: 1 }}><PlaceFilter mobile={mobile} action={actionFilter} address={addressFilter} onFiltersChanged={onFiltersChanged}/></Box>
         <Typography gutterBottom variant={mobile ? "h5" : "h4"} component="h1" sx={{ px: 1, mt: 2 }}>{title}</Typography>
           {isSuccess && data?.results ? <Masonry columns={{ m: 1, md: 2, lg: Math.max(2, Math.min(3, data.results.length)), xl: Math.max(2, Math.min(4, data.results.length)) }} spacing={0}>
@@ -148,7 +148,7 @@ export default function PlacesList({mobile, onShowLocation}) {
                     {place.address && <Typography variant="body2"><PostalAddress address={place.address} /></Typography>}
                     {place.phone && <Typography variant="body2">{formatPhoneNumber(place.phone)}</Typography>}
                     {place.claim && <Typography variant="body1">{place.claim}</Typography>}
-                      {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url.replace(/https?:\/\//, '')}</Link>}
+                    {place.url && <Link href={place.url} target="_blank" variant="caption">{place.url.replace(/https?:\/\//, '')}</Link>}
                   </Stack>
                 </CardContent>
                 <Stack direction="row" justifyContent="space-between" alignItems="flex-end" spacing={0.5}>
@@ -169,7 +169,7 @@ export default function PlacesList({mobile, onShowLocation}) {
         </Masonry>
         :
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
-          <CircularProgress />
+          <CircularProgress disableShrink />
         </Box>}
         <PlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} id={placeId} />
       </Box>
