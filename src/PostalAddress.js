@@ -13,6 +13,7 @@ const substitutionList = {
     'проспект': 'пр.',
     'проезд': 'пр-д',
     'переулок': 'пер.',
+    'набережная': 'наб.',
 };
 
 function substitute(address) {
