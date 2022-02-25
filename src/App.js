@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider, useIsFetching } from 'react-query';
 import { Outlet, Routes, Route, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 import ReactGA from 'react-ga4';
@@ -9,6 +9,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -110,6 +111,8 @@ const pages = [
 function Layout({mobile, handleAdd}) {
     const [anchorElNav, setAnchorElNav] = useState(null);
 
+    const isFetching = useIsFetching()
+
     const handleOpenNavMenu = (e) => {
         setAnchorElNav(e.currentTarget);
     };
@@ -121,7 +124,12 @@ function Layout({mobile, handleAdd}) {
     return (
       <div className="App">
         <Box component="header" sx={{ borderBottom: 1, borderColor: 'grey.400', position: 'relative', display: 'flex', flexGrow: 0, alignItems: 'center' }}>
-          <RouterLink to="/"><PetsIcon color="success" fontSize={mobile ? "medium" : "large"} sx={{ m: 1 }} /></RouterLink>
+          <RouterLink to="/">
+            {isFetching ?
+             <CircularProgress color="success" size={mobile ? 24 : 35 } disableShrink sx={{ m: 1 }} />
+              : <PetsIcon color="success" fontSize={mobile ? "medium" : "large"} sx={{ m: 1 }} />
+            }
+          </RouterLink>
           <Typography variant={mobile ? "h6" : "h4"} component="h1" sx={{ flexGrow: 1 }} style={{ overflowX: 'hidden' }}>
             #можноссобакой
           </Typography>
@@ -178,7 +186,6 @@ function Layout({mobile, handleAdd}) {
             <Button variant="contained" onClick={handleAdd} sx={{ my: 0, mx: 0.5 }}>Добавить место</Button>
           </Box>
         </Box>
-
         <Outlet />
       </div>
     );
