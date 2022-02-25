@@ -33,9 +33,9 @@ def list_places():
     filters = [
         Place.visible == True
     ]
-    kind = request.args.get('kind')
-    if kind:
-        filters.append(Place.kind == kind)
+    kind = request.args.getlist('kind')
+    if len(kind):
+        filters.append(Place.kind << kind)
     address = request.args.get('address')
     if address:
         filters.append(Place.address.startswith(address))

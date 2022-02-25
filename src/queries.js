@@ -24,7 +24,10 @@ export const API = window.location.origin + '/api/v0/';
 export function loadPlaces(kind, address) {
     const url = new URL(API + 'places/');
 
-    if (kind)
+    if (Array.isArray(kind))
+        for (var item of kind)
+            url.searchParams.append('kind', item);
+    else if (kind)
         url.searchParams.set('kind', kind);
     if (address)
         url.searchParams.set('address', address);
