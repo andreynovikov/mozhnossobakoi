@@ -18,4 +18,4 @@ export default function PlaceView({id, mobile}) {
         <Place id={placeId} mobile={mobile} />
       </Container>
     );
-};
+}

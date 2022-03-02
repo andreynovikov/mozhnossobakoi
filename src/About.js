@@ -65,4 +65,4 @@ export default function About({mobile}) {
         </Container>
       </Box>
     );
-};
+}

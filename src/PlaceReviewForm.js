@@ -107,4 +107,4 @@ export default function PlaceReviewForm({placeId, mobile, onClose}) {
         <FormHelperText>Нажимая кнопку "Добавить", Вы даёте согласие на обработку, стилистическую правку и публикацию предоставленной Вами информации</FormHelperText>
       </Paper>
     );
-};
+}

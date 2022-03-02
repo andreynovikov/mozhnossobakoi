@@ -118,4 +118,4 @@ export default function Place({id, mobile}) {
         <CircularProgress />
       </Box>
     );
-};
+}

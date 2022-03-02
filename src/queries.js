@@ -36,7 +36,7 @@ export function loadPlaces(kind, address) {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}
 
 export function loadPlace(id) {
     return fetch(API + 'places/' + id + '/')
@@ -44,7 +44,7 @@ export function loadPlace(id) {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}
 
 export function createPlace(data) {
     var headers = {
@@ -59,7 +59,7 @@ export function createPlace(data) {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}
 
 export function patchPlace(id, data) {
     var headers = {
@@ -74,7 +74,7 @@ export function patchPlace(id, data) {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}
 
 export function createReview(place, data) {
     var headers = {
@@ -89,7 +89,7 @@ export function createReview(place, data) {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}
 
 export function loadLocations() {
     const url = new URL(API + 'locations/');
@@ -99,4 +99,4 @@ export function loadLocations() {
             if (!response.ok) throw response;
             return response.json();
         });
-};
+}

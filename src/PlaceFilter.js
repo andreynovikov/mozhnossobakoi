@@ -234,4 +234,4 @@ export default function PlaceFilter({mobile, action, address, onFiltersChanged})
         </FormControl>
       </Stack>
     );
-};
+}

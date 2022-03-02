@@ -60,6 +60,7 @@ export function useHashParams() {
         query  = location.hash.slice(1);
 
         let hashParams = {};
+        // eslint-disable-next-line
         while (match = search.exec(query))
             hashParams[match[1]] = match[2];
         return hashParams;

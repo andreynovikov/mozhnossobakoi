@@ -101,4 +101,4 @@ export default function PlacesLayer({mobile, kindFilter, onPlaceDetails}) {
           </MarkerClusterGroup>
         ) : null
     );
-};
+}

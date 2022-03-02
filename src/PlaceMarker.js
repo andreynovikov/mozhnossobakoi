@@ -67,4 +67,4 @@ function getMarkerIcon(kind, claimed) {
 
 export default function PlaceMarker(props) {
     return <Marker icon={getMarkerIcon(props.kind, props.claimed)} {...props} />
-};
+}

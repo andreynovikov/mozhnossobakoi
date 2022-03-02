@@ -8,18 +8,18 @@ import 'leaflet-plugins/layer/tile/Yandex';
 
 
 const StabLayer = L.Layer.extend({
-	options: {
-		minZoom: 0,
-		maxZoom: 19
-	},
+    options: {
+        minZoom: 0,
+        maxZoom: 19
+    },
     onAdd: function (map) {},
-	beforeAdd: function (map) { map._addZoomLimit(this) },
-	onRemove: function (map) { map._removeZoomLimit(this) }
+    beforeAdd: function (map) { map._addZoomLimit(this) },
+    onRemove: function (map) { map._removeZoomLimit(this) }
 });
 
 const stabLayer = createTileLayerComponent(function createTileLayer({ type, ...options }, context) {
             return {
-		        instance: new StabLayer(type, withPane(options, context)),
+                instance: new StabLayer(type, withPane(options, context)),
                 context
             }
         }, updateGridLayer);
@@ -52,4 +52,4 @@ export default function YandexTileLayer({type, ...options}) {
     }, []);
 
     return <Layer />;
-};
+}

@@ -75,4 +75,4 @@ export default function Help({mobile}) {
         </Container>
       </Box>
     );
-};
+}

@@ -31,4 +31,4 @@ function substitute(address) {
 
 export default function PostalAddress({address}) {
     return substitute(address);
-};
+}
