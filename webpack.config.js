@@ -7,7 +7,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
-const ESLintFormatter = require('./eslint-formatter');
 
 const CopyPublicFolderPlugin = function(cb) {
   this.apply = function(compiler) {
@@ -33,7 +32,7 @@ module.exports = (env, argv) => {
         output: {
             clean: true,
             path: path.resolve(__dirname, 'build'),
-            filename: isProduction ? 'static/js/[name].[contenthash:8].js' : isDevelopment && 'static/js/bundle.js',
+            filename: isProduction ? 'static/js/[name].[contenthash:8].js' : isDevelopment && 'static/js/[name].js',
             chunkFilename: isProduction ? 'static/js/[name].[contenthash:8].chunk.js' : isDevelopment && 'static/js/[name].chunk.js',
             assetModuleFilename: 'static/media/[name].[hash][ext]',
             publicPath: '/',
@@ -161,6 +160,10 @@ module.exports = (env, argv) => {
         devServer: {
             server: 'https',
             client: {
+                overlay: {
+                    warnings: false,
+                    errors: true
+                },
                 webSocketTransport: 'ws',
             },
             webSocketServer: 'ws',
