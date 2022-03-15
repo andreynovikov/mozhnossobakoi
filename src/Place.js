@@ -27,6 +27,7 @@ import {
 } from './queries';
 
 import PlaceIcon from './PlaceIcon';
+import PlaceMap from './PlaceMap';
 import PlaceReviewForm from './PlaceReviewForm';
 import { formatPhoneNumber } from './utils';
 
@@ -112,6 +113,9 @@ export default function Place({id, mobile}) {
             )}
           </Grid>}
 
+          <Box sx={{mt: 2, mb: 1, width: "100%", height: 300}}>
+            <PlaceMap position={place.position} kind={place.kind} claimed={place.claimed} />
+          </Box>
         </Box>
       :
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
