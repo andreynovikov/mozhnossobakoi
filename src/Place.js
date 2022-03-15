@@ -7,16 +7,22 @@ import ReactGA from 'react-ga4';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import ShareIcon from '@mui/icons-material/Share';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
 import { SocialIcon } from 'react-social-icons';
+
+import punycode from 'punycode';
 
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -36,6 +42,8 @@ import './Place.css';
 
 export default function Place({id, mobile}) {
     const [reviewMode, setReviewMode] = useState(false);
+    const [shareOpen, setShareOpen] = useState(false);
+    const [shareUrl, setShareUrl] = useState('');
 
     const location = useLocation();
 
@@ -51,15 +59,28 @@ export default function Place({id, mobile}) {
     );
 
     useEffect(() => {
+        const origin = window.location.protocol + "//" + punycode.toUnicode(window.location.hostname) + (window.location.port ? ':' + window.location.port: '');
+        setShareUrl(origin + '/places/' + id);
+    }, [id]);
+
+    useEffect(() => {
         if (isSuccess)
             ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: place.name });
     }, [place, isSuccess]);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(shareUrl).then(function() {
+            setShareOpen(false);
+        }, function() {
+            console.log("Copy failure");
+        });
+    };
 
     return (
       isSuccess && place ?
         <Box>
 
-          <Stack direction="row" alignItems="baseline" spacing={1} sx={{mb:2 }}>
+          <Stack direction="row" alignItems="baseline" spacing={1} sx={{mb:2}}>
             <PlaceIcon kind={place.kind} fontSize="large" color={place.claimed ? "success" : "primary"} />
             <Typography variant={ mobile ? "h5" : id ? "h3" : "h1"} component="h2">
               {place.name}
@@ -88,9 +109,14 @@ export default function Place({id, mobile}) {
           {reviewMode ?
             <PlaceReviewForm placeId={place.id} mobile={mobile} onClose={() => setReviewMode(false)} />
           :
-            <Button variant="outlined" size={mobile ? "small" : "medium"} sx={{my: 1.5}} onClick={() => setReviewMode(true)}>
-              Оставить отзыв
-            </Button>
+           <Stack direction="row" spacing={1} sx={{my: 1.5}}>
+              <Button variant="outlined" size={mobile ? "small" : "medium"} onClick={() => setReviewMode(true)}>
+                Оставить отзыв
+              </Button>
+              <Button variant="outlined" size={mobile ? "small" : "medium"} onClick={()=> setShareOpen(true)}>
+                <ShareIcon />
+              </Button>
+            </Stack>
           }
 
           {place.reviews.length > 0 && <Grid container direction={mobile ? "column" : "row"} spacing={2} sx={{ my: 1 }}>
@@ -116,6 +142,16 @@ export default function Place({id, mobile}) {
           <Box sx={{mt: 2, mb: 1, width: "100%", height: 300}}>
             <PlaceMap position={place.position} kind={place.kind} claimed={place.claimed} />
           </Box>
+
+          <Dialog fullWidth maxWidth="sm" open={shareOpen} onClose={() => setShareOpen(false)}>
+            <DialogContent>
+              <Stack direction="column" spacing={1}>
+                <TextField defaultValue={shareUrl} size="small" margin="dense" InputProps={{readOnly: true}} />
+                {navigator && navigator.clipboard && <Button variant="contained" size="small" onClick={handleCopy} sx={{width: 'fit-content'}}>Копировать</Button>}
+              </Stack>
+            </DialogContent>
+          </Dialog>
+
         </Box>
       :
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
