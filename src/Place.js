@@ -40,7 +40,7 @@ import { formatPhoneNumber } from './utils';
 import './Place.css';
 
 
-export default function Place({id, mobile}) {
+export default function Place({id, mobile, fromMap, onShowLocation}) {
     const [reviewMode, setReviewMode] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
     const [shareUrl, setShareUrl] = useState('');
@@ -139,9 +139,9 @@ export default function Place({id, mobile}) {
             )}
           </Grid>}
 
-          <Box sx={{mt: 2, mb: 1, width: "100%", height: 300}}>
-            <PlaceMap position={place.position} kind={place.kind} claimed={place.claimed} />
-          </Box>
+          {!fromMap && <Box sx={{mt: 2, mb: 1, width: "100%", height: 300}}>
+            <PlaceMap position={place.position} kind={place.kind} claimed={place.claimed} onShowLocation={() => onShowLocation(place.position)} />
+          </Box>}
 
           <Dialog fullWidth maxWidth="sm" open={shareOpen} onClose={() => setShareOpen(false)}>
             <DialogContent>

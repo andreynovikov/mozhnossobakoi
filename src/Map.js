@@ -278,7 +278,7 @@ export default forwardRef(function Map({mobile}, ref) {
           }
 
           {mobileLayout && hashParams.place !== 'new' && <Button variant="contained" onClick={handleAdd} className="add-button">Добавить место</Button>}
-          <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} />
+          <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} fromMap />
           <NewPlaceDrawer ref={newPlaceDrawerRef} open={hashParams.place === 'new'} onClose={handleCloseDrawer} mobile={mobile} position={position} />
 
           <Dialog open={locationErrorOpen} onClose={() => setLocationErrorOpen(false)} aria-labelledby="location-dialog-title" aria-describedby="location-dialog-description">

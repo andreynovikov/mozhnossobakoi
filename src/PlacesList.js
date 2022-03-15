@@ -131,7 +131,7 @@ export default function PlacesList({mobile, onShowLocation}) {
             )}
           </Masonry>
         )}
-        <PlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} id={placeId} />
+        <PlaceDrawer ref={drawerRef} open={open} onClose={onClose} mobile={mobile} id={placeId} onShowLocation={onShowLocation} />
       </Box>
     );
 }

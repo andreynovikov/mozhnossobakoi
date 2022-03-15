@@ -99,7 +99,7 @@ export default function App() {
           <Route path="/" element={<Layout mobile={mobile} handleAdd={handleAdd} />}>
             <Route index element={<Map ref={mapRef} mobile={mobile} />} />
             <Route path="places" element={<PlacesList mobile={mobile} onShowLocation={onShowLocation} />} />
-            <Route path="places/:id" element={<PlaceView mobile={mobile} /> } />
+            <Route path="places/:id" element={<PlaceView mobile={mobile} onShowLocation={onShowLocation} /> } />
             <Route path="help" element={<Help mobile={mobile} />} />
             <Route path="about" element={<About mobile={mobile} />} />
           </Route>

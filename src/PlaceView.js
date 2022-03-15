@@ -6,7 +6,7 @@ import Place from './Place';
 import { useDocumentTitle } from './hooks';
 
 
-export default function PlaceView({id, mobile}) {
+export default function PlaceView({id, mobile, onShowLocation}) {
     const params = useParams();
 
     const placeId = id || params.id;
@@ -15,7 +15,7 @@ export default function PlaceView({id, mobile}) {
 
     return (
       <Container sx={{ my: 2 }}>
-        <Place id={placeId} mobile={mobile} />
+        <Place id={placeId} mobile={mobile} onShowLocation={onShowLocation} />
       </Container>
     );
 }
