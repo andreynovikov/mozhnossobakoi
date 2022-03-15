@@ -158,6 +158,7 @@ module.exports = (env, argv) => {
             },
         },
         devServer: {
+            historyApiFallback: true,
             server: 'https',
             client: {
                 overlay: {
