@@ -191,6 +191,7 @@ function Layout({mobile, handleAdd}) {
               <MenuItem key="social" onClick={handleCloseNavMenu}>
                 <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
                 <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+                <SocialIcon url="https://vk.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
               </MenuItem>
             </Menu>
           </Box>
@@ -198,6 +199,7 @@ function Layout({mobile, handleAdd}) {
           <Box sx={{ display: { xs: 'none', md: 'flex'}, mx: 2, alignItems: 'center' }}>
             <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+            <SocialIcon url="https://vk.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             {pages.map((page) => (
               <Button key={page.to} component={RouterLink} to={page.to} sx={{ my: 0, mx: 0.5 }}>
                 {page.title}
