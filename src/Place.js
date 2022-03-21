@@ -7,13 +7,10 @@ import ReactGA from 'react-ga4';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import ShareIcon from '@mui/icons-material/Share';
@@ -21,8 +18,6 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
 import { SocialIcon } from 'react-social-icons';
-
-import punycode from 'punycode';
 
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -35,6 +30,7 @@ import {
 import PlaceIcon from './PlaceIcon';
 import PlaceMap from './PlaceMap';
 import PlaceReviewForm from './PlaceReviewForm';
+import PlaceShareDialog from './PlaceShareDialog';
 import { formatPhoneNumber } from './utils';
 
 import './Place.css';
@@ -43,7 +39,6 @@ import './Place.css';
 export default function Place({id, mobile, fromMap, onShowLocation}) {
     const [reviewMode, setReviewMode] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
-    const [shareUrl, setShareUrl] = useState('');
 
     const location = useLocation();
 
@@ -59,22 +54,9 @@ export default function Place({id, mobile, fromMap, onShowLocation}) {
     );
 
     useEffect(() => {
-        const origin = window.location.protocol + "//" + punycode.toUnicode(window.location.hostname) + (window.location.port ? ':' + window.location.port: '');
-        setShareUrl(origin + '/places/' + id);
-    }, [id]);
-
-    useEffect(() => {
         if (isSuccess)
             ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: place.name });
     }, [place, isSuccess]);
-
-    const handleCopy = () => {
-        navigator.clipboard.writeText(shareUrl).then(function() {
-            setShareOpen(false);
-        }, function() {
-            console.log("Copy failure");
-        });
-    };
 
     return (
       isSuccess && place ?
@@ -143,14 +125,7 @@ export default function Place({id, mobile, fromMap, onShowLocation}) {
             <PlaceMap position={place.position} kind={place.kind} claimed={place.claimed} onShowLocation={() => onShowLocation(place.position)} />
           </Box>}
 
-          <Dialog fullWidth maxWidth="sm" open={shareOpen} onClose={() => setShareOpen(false)}>
-            <DialogContent>
-              <Stack direction="column" spacing={1}>
-                <TextField defaultValue={shareUrl} size="small" margin="dense" InputProps={{readOnly: true}} />
-                {navigator && navigator.clipboard && <Button variant="contained" size="small" onClick={handleCopy} sx={{width: 'fit-content'}}>Копировать</Button>}
-              </Stack>
-            </DialogContent>
-          </Dialog>
+          <PlaceShareDialog place={place} open={shareOpen} onClose={() => setShareOpen(false)} />
 
         </Box>
       :
