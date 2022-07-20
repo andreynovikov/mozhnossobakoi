@@ -6,6 +6,7 @@ from peewee import DoesNotExist, IntegrityError, PeeweeException
 
 from app import app
 from models import *
+from tasks import notify_place_added
 
 
 @app.errorhandler(PeeweeException)
@@ -63,6 +64,8 @@ def create_place():
 
         place = Place.create(**data)
         review = Review.create(place=place, message=data['description'], visited_date=data['visited'], ip=request.remote_addr)
+
+        notify_place_added.delay()
 
         return place.serialize
 
