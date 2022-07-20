@@ -82,7 +82,7 @@ export default function Place({id, mobile, fromMap, onShowLocation}) {
               {place.vk && <SocialIcon url={place.vk} target="_blank" style={{ height: 22, width: 22 }} />}
               {place.facebook && <SocialIcon url={place.facebook} target="_blank" style={{ height: 22, width: 22 }} />}
               {place.telegram && <SocialIcon url={`https://telegram.me/${place.telegram}`} target="_blank" style={{ height: 22, width: 22 }} />}
-              {place.instagram && <SocialIcon url={`https://instagram.com/${place.instagram}`} target="_blank" style={{ height: 22, width: 22 }} />}
+              {place.instagram && <SocialIcon url={`https://instagram.com/${place.instagram}`} network="linkedin" bgColor="#e94475" target="_blank" style={{ height: 22, width: 22 }} />}
             </Stack>
           </Stack>
 

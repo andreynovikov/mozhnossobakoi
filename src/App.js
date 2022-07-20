@@ -189,7 +189,7 @@ function Layout({mobile, handleAdd}) {
               ))}
               <Divider />
               <MenuItem key="social" onClick={handleCloseNavMenu}>
-                <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+                <SocialIcon url="https://instagram.com/mozhnossobakoi" network="linkedin" bgColor="#e94475" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
                 <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
                 <SocialIcon url="https://vk.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
               </MenuItem>
@@ -197,7 +197,7 @@ function Layout({mobile, handleAdd}) {
           </Box>
 
           <Box sx={{ display: { xs: 'none', md: 'flex'}, mx: 2, alignItems: 'center' }}>
-            <SocialIcon url="https://instagram.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+            <SocialIcon url="https://instagram.com/mozhnossobakoi" network="linkedin" bgColor="#e94475" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             <SocialIcon url="https://vk.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             {pages.map((page) => (
