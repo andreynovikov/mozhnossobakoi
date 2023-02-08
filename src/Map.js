@@ -15,6 +15,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import ErrorBoundary from './ErrorBoundary';
 import DraggableMarker from './DraggableMarker';
 import LocateControl from './LocateControl';
 import NewPlaceDrawer from './NewPlaceDrawer';
@@ -267,15 +268,17 @@ export default forwardRef(function Map({mobile}, ref) {
             <DraggableMarker ref={markerRef} visible={hashParams.place === 'new'} onPositionChange={onPositionChange} />
           </MapContainer>
 
-          {hashParams.place !== 'new' && <AddressSuggestions
-            filterFromBound="country"
-            filterToBound="house"
-            inputProps={{placeholder: "Введите адрес"}}
-            containerClassName="AddressSuggestions"
-            token="6f1eeeda9215d36fce5802a014e1487e488cb2b3"
-            value={value}
-            onChange={setValueEx} />
-          }
+          <ErrorBoundary>
+            {hashParams.place !== 'new' && <AddressSuggestions
+              filterFromBound="country"
+              filterToBound="house"
+              inputProps={{placeholder: "Введите адрес"}}
+              containerClassName="AddressSuggestions"
+              token="6f1eeeda9215d36fce5802a014e1487e488cb2b3"
+              value={value}
+              onChange={setValueEx} />
+            }
+          </ErrorBoundary>
 
           {mobileLayout && hashParams.place !== 'new' && <Button variant="contained" onClick={handleAdd} className="add-button">Добавить место</Button>}
           <PlaceDrawer ref={placeDrawerRef} open={parseInt(hashParams.place) > 0} onClose={handleCloseDrawer} mobile={mobile} id={placeId} fromMap />
