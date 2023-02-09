@@ -13,9 +13,9 @@ import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 
-import AdapterMoment from '@mui/lab/AdapterMoment';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -35,7 +35,7 @@ export default function PlaceReviewForm({placeId, mobile, onClose}) {
     const queryClient = useQueryClient();
 
     const addReview = useMutation(data => createReview(placeId, data), {
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(reviewKeys.list(placeId));
             queryClient.invalidateQueries(placeKeys.detail(placeId));
         }
@@ -80,7 +80,7 @@ export default function PlaceReviewForm({placeId, mobile, onClose}) {
 
         <LocalizationProvider dateAdapter={AdapterMoment} locale="ru">
           <DatePicker
-            views={['year', 'month']}
+            views={['month', 'year']}
             label="Дата посещения"
             minDate={moment().subtract(11, 'years')}
             maxDate={moment()}
@@ -104,7 +104,7 @@ export default function PlaceReviewForm({placeId, mobile, onClose}) {
             Отменить
           </Button>
         </Stack>
-        <FormHelperText>Нажимая кнопку "Добавить", Вы даёте согласие на обработку, стилистическую правку и публикацию предоставленной Вами информации</FormHelperText>
+        <FormHelperText>Нажимая кнопку &quot;Добавить&quot;, Вы даёте согласие на обработку, стилистическую правку и публикацию предоставленной Вами информации</FormHelperText>
       </Paper>
     );
 }

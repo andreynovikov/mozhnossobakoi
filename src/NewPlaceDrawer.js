@@ -9,9 +9,9 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 
-import AdapterMoment from '@mui/lab/AdapterMoment';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DatePicker from '@mui/lab/DatePicker';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -146,7 +146,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
 
                 <LocalizationProvider dateAdapter={AdapterMoment} locale="ru">
                     <DatePicker
-                        views={['year', 'month']}
+                        views={['month', 'year']}
                         label="Дата посещения"
                         minDate={moment().subtract(11, 'years')}
                         maxDate={moment()}
@@ -188,7 +188,7 @@ export default forwardRef(function NewPlaceDrawer({open, onClose, mobile, positi
                         </Button>
                     </Grid>
                 </Grid>
-                <FormHelperText>Нажимая кнопку "Добавить", Вы даёте согласие на обработку, стилистическую правку и публикацию предоставленной Вами информации</FormHelperText>
+                <FormHelperText>Нажимая кнопку &quot;Добавить&quot;, Вы даёте согласие на обработку, стилистическую правку и публикацию предоставленной Вами информации</FormHelperText>
             </Box>
         </Drawer>
     );
