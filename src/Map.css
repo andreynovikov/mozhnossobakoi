@@ -10,7 +10,7 @@
     width: 100%;
 }
 
-.AddressSuggestions {
+.AddressSuggestions, .react-dadata__container {
   position: absolute;
   top: 10px;
   left: 50px;

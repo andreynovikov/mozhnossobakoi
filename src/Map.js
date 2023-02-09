@@ -123,7 +123,7 @@ export default forwardRef(function Map({mobile}, ref) {
     const setValueEx = (v) => {
         setValue(v);
         if (v.data?.geo_lat && v.data?.geo_lon) {
-            map.flyTo([v.data?.geo_lat, v.data?.geo_lon], Math.min(Math.max(13, map.getZoom()), 17));
+            map.flyTo([v.data.geo_lat, v.data.geo_lon], Math.min(Math.max(v.data.house !== null ? 16 : 13, map.getZoom()), v.data.house !== null ? 20 : 17));
         }
     };
 
@@ -275,15 +275,15 @@ export default forwardRef(function Map({mobile}, ref) {
           </MapContainer>
 
           <ErrorBoundary>
-            {hashParams.place !== 'new' && <AddressSuggestions
-              filterFromBound="country"
-              filterToBound="house"
-              inputProps={{placeholder: "Введите адрес"}}
-              containerClassName="AddressSuggestions"
-              token="6f1eeeda9215d36fce5802a014e1487e488cb2b3"
-              value={value}
-              onChange={setValueEx} />
-            }
+            {hashParams.place !== 'new' && (
+              <AddressSuggestions
+                filterFromBound="country"
+                filterToBound="house"
+                inputProps={{placeholder: "Введите адрес"}}
+                token="6f1eeeda9215d36fce5802a014e1487e488cb2b3"
+                value={value}
+                onChange={setValueEx} />
+            )}
           </ErrorBoundary>
 
           {mobileLayout && hashParams.place !== 'new' && <Button variant="contained" onClick={handleAdd} className="add-button">Добавить место</Button>}
