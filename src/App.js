@@ -131,6 +131,7 @@ const pages = [
 function Layout({mobile, handleAdd}) {
     const [anchorElNav, setAnchorElNav] = useState(null);
 
+    const location = useLocation();
     const isFetching = useIsFetching()
 
     const handleOpenNavMenu = (e) => {
@@ -182,6 +183,11 @@ function Layout({mobile, handleAdd}) {
                 display: { xs: 'block', md: 'none' },
               }}
             >
+              { location.pathname !== '/' && (
+                <MenuItem key="/" onClick={handleCloseNavMenu} component={RouterLink} to="/">
+                  <Typography textAlign="center">Карта мест</Typography>
+                </MenuItem>
+              )}
               {pages.map((page) => (
                 <MenuItem key={page.to} onClick={handleCloseNavMenu} component={RouterLink} to={page.to}>
                   <Typography textAlign="center">{page.title}</Typography>
@@ -200,6 +206,11 @@ function Layout({mobile, handleAdd}) {
             <SocialIcon url="https://instagram.com/mozhnossobakoi" network="linkedin" bgColor="#e94475" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             <SocialIcon url="https://telegram.me/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
             <SocialIcon url="https://vk.com/mozhnossobakoi" target="_blank" style={{ height: 25, width: 25, marginRight: 10 }} />
+            { location.pathname !== '/' && (
+              <Button component={RouterLink} to="/" sx={{ my: 0, mx: 0.5 }}>
+                Карта мест
+              </Button>
+            )}
             {pages.map((page) => (
               <Button key={page.to} component={RouterLink} to={page.to} sx={{ my: 0, mx: 0.5 }}>
                 {page.title}
