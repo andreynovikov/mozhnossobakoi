@@ -32,14 +32,17 @@ import PlaceMap from './PlaceMap';
 import PlaceReviewForm from './PlaceReviewForm';
 import PlaceShareDialog from './PlaceShareDialog';
 import { formatPhoneNumber } from './utils';
+import { useDocumentTitle } from './hooks';
 
 import './Place.css';
 
 
-export default function Place({id, mobile, fromMap, onShowLocation}) {
+export default function Place({id, mobile, fromMap, onShowLocation, setDocumentTitle}) {
+    const [title, setTitle] = useState('');
     const [reviewMode, setReviewMode] = useState(false);
     const [shareOpen, setShareOpen] = useState(false);
 
+    useDocumentTitle(title);
     const location = useLocation();
 
     const {data: place, isSuccess} = useQuery(
@@ -54,8 +57,11 @@ export default function Place({id, mobile, fromMap, onShowLocation}) {
     );
 
     useEffect(() => {
-        if (isSuccess)
+        if (isSuccess) {
+            if (setDocumentTitle)
+                setTitle(place.name + ': описание места, куда можно с собакой');
             ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: place.name });
+        }
     }, [place, isSuccess]);
 
     return (
@@ -134,3 +140,7 @@ export default function Place({id, mobile, fromMap, onShowLocation}) {
       </Box>
     );
 }
+
+Place.defaultProps = {
+    setDocumentTitle: false
+};

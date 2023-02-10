@@ -48,7 +48,8 @@ export function usePrevious(value) {
 
 export function useDocumentTitle(title) {
     useEffect(() => {
-        document.title = title;
+        if (title !== '')
+            document.title = title;
     }, [title]);
 }
 
