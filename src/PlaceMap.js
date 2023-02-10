@@ -21,7 +21,7 @@ function MapEvents({onMapZoomed, onBaseLayerChange}) {
 
 export default function PlaceMap({position, kind, claimed, onShowLocation}) {
     const [map, setMap] = useState(null);
-    const [mapZoom, setMapZoom] = useState(18);
+    const [mapZoom, setMapZoom] = useState(17);
     const [tileLayer, setTileLayer] = useStickyState('Yandex Map', 'tileLayer');
 
     useEffect(() => {
@@ -48,6 +48,12 @@ export default function PlaceMap({position, kind, claimed, onShowLocation}) {
             <TileLayer
               attribution='&copy; <a href="https://stadiamaps.com">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org">OpenMapTiles</a> &copy; <a href="https://osm.org">OpenStreetMap</a> contributors'
               url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer checked={tileLayer === 'Satellite Map'} name="Satellite Map">
+            <TileLayer
+              attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             />
           </LayersControl.BaseLayer>
         </LayersControl>
