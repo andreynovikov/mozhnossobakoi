@@ -40,14 +40,21 @@ def list_places():
     address = request.args.get('address')
     if address:
         filters.append(Place.address.startswith(address))
+    page = request.args.get('page')
     query = (
         Place
         .select()
         .where(*filters)
         .order_by(Place.last_seen.desc())
     )
+    count = query.count()
+    if page and page.isdigit():
+        page = int(page)
+        query = query.paginate(page, 20)
     results = [p.serialize_list for p in query]
     return {
+        'count': count,
+        'page': page,
         'results': results
     }
 

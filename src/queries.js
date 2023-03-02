@@ -21,7 +21,7 @@ export const locationKeys = {
 
 export const API = window.location.origin + '/api/v0/';
 
-export function loadPlaces(kind, address) {
+export function loadPlaces(kind, address, page=undefined) {
     const url = new URL(API + 'places/');
 
     if (Array.isArray(kind))
@@ -31,6 +31,8 @@ export function loadPlaces(kind, address) {
         url.searchParams.set('kind', kind);
     if (address)
         url.searchParams.set('address', address);
+    if (page)
+        url.searchParams.set('page', page);
     return fetch(url)
         .then(response => {
             if (!response.ok) throw response;
