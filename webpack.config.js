@@ -9,16 +9,16 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 const CopyPublicFolderPlugin = function(cb) {
-  this.apply = function(compiler) {
-    if (compiler.hooks && compiler.hooks.done) {
-        compiler.hooks.done.tap('copy-public-folder', () => {
-            fs.copySync('public', 'build', {
-                dereference: true,
-                filter: file => file !== 'public/index.html',
+    this.apply = function(compiler) {
+        if (compiler.hooks && compiler.hooks.done) {
+            compiler.hooks.done.tap('copy-public-folder', () => {
+                fs.copySync('public', 'build', {
+                    dereference: true,
+                    filter: file => file !== 'public/index.html',
+                });
             });
-        });
-    }
-  };
+        }
+    };
 };
 
 module.exports = (env, argv) => {
@@ -46,56 +46,35 @@ module.exports = (env, argv) => {
                     loader: require.resolve('source-map-loader'),
                 },
                 {
-                    oneOf: [
-                        {
-                            test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-                            type: 'asset',
-                            parser: {
-                                dataUrlCondition: {
-                                    maxSize: 10000,
-                                },
-                            },
-                        },
-                        {
-                            test: /\.?js$/,
-                            exclude: /node_modules/,
-                            use: {
-                                loader: require.resolve('babel-loader'),
-                                options: {
-                                    presets: [
-                                        '@babel/preset-env',
-                                        ["@babel/preset-react", {"runtime": "automatic"}]
-                                    ],
-                                    plugins: [
-                                        isDevelopment && require.resolve('react-refresh/babel')
-                                    ].filter(Boolean),
-                                }
-                            }
-                        },
-                        {
-                            test: /\.css$/i,
-                            use: [
-                                isDevelopment && require.resolve('style-loader'),
-                                isProduction && {
-                                    loader: MiniCssExtractPlugin.loader,
-                                    // css is located in `static/css`, use '../../' to locate index.html folder
-                                    options: { publicPath: '../../' }
-                                },
-                                {
-                                    loader: require.resolve('css-loader'),
-                                    options: {},
-                                },
+                    test: /\.js$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: require.resolve('babel-loader'),
+                        options: {
+                            presets: [
+                                '@babel/preset-env',
+                                ["@babel/preset-react", {"runtime": "automatic"}]
+                            ],
+                            plugins: [
+                                isDevelopment && require.resolve('react-refresh/babel')
                             ].filter(Boolean),
+                        }
+                    }
+                },
+                {
+                    test: /\.css$/i,
+                    use: [
+                        isDevelopment && require.resolve('style-loader'),
+                        isProduction && {
+                            loader: MiniCssExtractPlugin.loader,
+                            // css is located in `static/css`, use '../../' to locate index.html folder
+                            options: { publicPath: '../../' }
                         },
                         {
-                            // Exclude `js` files to keep "css" loader working as it injects
-                            // its runtime that would otherwise be processed through "file" loader.
-                            // Also exclude `html` and `json` extensions so they get processed
-                            // by webpacks internal loaders.
-                            exclude: [/^$/, /\.(js|jsx)$/, /\.html$/, /\.json$/],
-                            type: 'asset/resource',
+                            loader: require.resolve('css-loader'),
+                            options: {},
                         },
-                    ]
+                    ].filter(Boolean),
                 }
             ]
         },
