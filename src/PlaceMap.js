@@ -30,8 +30,8 @@ export default function PlaceMap({position, kind, claimed, onShowLocation}) {
     }, [map]);
 
     return (
-      <MapContainer center={position} zoom={mapZoom} dragging={false} keyboard={false}
-                    scrollWheelZoom="center" doubleClickZoom="center" touchZoom="center" whenCreated={setMap} minZoom={3}
+      <MapContainer ref={setMap} center={position} zoom={mapZoom} dragging={false} keyboard={false}
+                    scrollWheelZoom="center" doubleClickZoom="center" touchZoom="center" minZoom={3}
                     style={{width: "100%", height: "100%"}}>
         <MapEvents onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} />
         <LayersControl position="topleft">

@@ -1,4 +1,5 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { createRoot } from 'react-dom/client';
+import { flushSync } from 'react-dom';
 import { Marker } from 'react-leaflet';
 
 import Box from '@mui/material/Box';
@@ -10,11 +11,17 @@ import L from 'leaflet';
 import PlaceIcon, { kinds } from './PlaceIcon';
 
 
-const iconHtml = renderToStaticMarkup(
-    <Box sx={{height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
-      <AddLocationIcon color="primary" sx={{ position: "fixed", fontSize: 52 }} />
-    </Box>
-);
+const div = document.createElement('div');
+const root = createRoot(div);
+flushSync(() => {
+    root.render(
+        <Box sx={{height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
+            <AddLocationIcon color="primary" sx={{ position: "fixed", fontSize: 52 }} />
+        </Box>
+    );
+});
+const iconHtml = div.innerHTML;
+div.remove();
 
 export const placeAddMarkerIcon = new L.DivIcon({
     iconSize: new L.Point(50, 50),
@@ -38,12 +45,18 @@ const iconCache = {
 };
 
 function generateMarkerIcon(kind, color) {
-    const iconHtml = renderToStaticMarkup(
-        <Box sx={{height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
-          <LocationMarkerIcon color="primary" sx={{ position: "fixed", fontSize: 52 }} />
-          <PlaceIcon kind={kind} color={color} fontSize="small" sx={{ position: "fixed", marginBottom: 1 }} />
-        </Box>
-    );
+    const div = document.createElement('div');
+    const root = createRoot(div);
+    flushSync(() => {
+        root.render(
+            <Box sx={{height: 50, display: "flex", justifyContent: "center", alignItems: "center"}}>
+                <LocationMarkerIcon color="primary" sx={{ position: "fixed", fontSize: 52 }} />
+                <PlaceIcon kind={kind} color={color} fontSize="small" sx={{ position: "fixed", marginBottom: 1 }} />
+            </Box>
+        );
+    });
+    const iconHtml = div.innerHTML;
+    div.remove();
 
     const markerIcon = new L.DivIcon({
         iconSize: new L.Point(50, 50),

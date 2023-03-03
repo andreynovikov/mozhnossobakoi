@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { useQuery } from 'react-query';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
+import MarkerClusterGroup from '@christopherpickering/react-leaflet-markercluster';
 
 import L from 'leaflet';
 
@@ -51,7 +51,8 @@ export default function PlacesLayer({mobile, kindFilter, onPlaceDetails}) {
             console.log('add', isPlaceSuccess, placeId, place.id, marker._leaflet_id);
             if (!marker.getPopup()) {
                 const container = L.DomUtil.create('div');
-                render(
+                const root = createRoot(container);
+                root.render(
                   <Box>
                     <Typography variant="h6" component="h6" gutterBottom>
                        <PlaceIcon kind={place.kind} color={place.claimed ? "success" : "primary"} style={{ verticalAlign: 'text-top', display: 'inline-flex' }} sx={{ mr: 0.5 }} />
@@ -65,8 +66,7 @@ export default function PlacesLayer({mobile, kindFilter, onPlaceDetails}) {
                        &laquo;{place.claim || place.reviews[0].message}&raquo;
                     </Typography>}
                     <Button size="small" onClick={() => onOpenPlace(place.id)}>Подробнее</Button>
-                  </Box>,
-                  container
+                  </Box>
                 );
                 marker.bindPopup(container, mobile ? undefined : { maxWidth: 450 });
             }

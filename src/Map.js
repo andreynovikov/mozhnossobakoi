@@ -227,7 +227,7 @@ export default forwardRef(function Map({mobile}, ref) {
 
     return (
         <div className="map-container">
-          <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom whenCreated={setMap} minZoom={3} worldCopyJump={true} className="map">
+          <MapContainer ref={setMap} center={mapCenter} zoom={mapZoom} scrollWheelZoom minZoom={3} worldCopyJump={true} className="map">
             <MapEvents onMapMoved={onMapMoved} onMapZoomed={setMapZoom} onBaseLayerChange={setTileLayer} onFilterChange={onFilterChange} />
             <LayersControl position="topleft">
               <LayersControl.BaseLayer checked={tileLayer === 'Yandex Map'} name="Yandex Map">
@@ -270,7 +270,7 @@ export default forwardRef(function Map({mobile}, ref) {
               </LayersControl.Overlay>
             </LayersControl>
             {hashParams.place !== 'new' && <PlacesLayer mobile={mobile} kindFilter={filter} onPlaceDetails={handlePlaceDetails} />}
-            <LocateControl options={locateOptions} startDirectly={false} />
+            <LocateControl {...locateOptions} />
             <DraggableMarker ref={markerRef} visible={hashParams.place === 'new'} onPositionChange={onPositionChange} />
           </MapContainer>
 
