@@ -13,7 +13,7 @@ module.exports = {
 
     parser: '@babel/eslint-parser',
 
-    plugins: ['react', 'import', 'react-hooks'],
+    plugins: ['react', 'import', 'react-hooks','cypress'],
 
     env: {
         browser: true,
@@ -32,7 +32,8 @@ module.exports = {
         'eslint:recommended',
         'plugin:import/recommended',
         'plugin:react/recommended',
-        'plugin:react-hooks/recommended'
+        'plugin:react-hooks/recommended',
+        'plugin:cypress/recommended'
     ],
 
     rules: {
