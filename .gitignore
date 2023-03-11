@@ -9,7 +9,7 @@ __pycache__/
 
 # testing
 coverage/
-cypress/
+cypress/videos/
 
 # production
 /build
