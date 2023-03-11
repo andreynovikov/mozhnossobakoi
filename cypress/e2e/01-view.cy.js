@@ -35,4 +35,4 @@ describe('Site view', () => {
         // Check add button exists
         cy.get('.MuiButton-contained').should('contain', 'Добавить место');
     });
-  });
+});

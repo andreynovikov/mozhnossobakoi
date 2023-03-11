@@ -8,10 +8,12 @@ __pycache__/
 /node_modules
 
 # testing
-/coverage
+coverage/
+cypress/
 
 # production
 /build
+/deploy
 
 # misc
 .env

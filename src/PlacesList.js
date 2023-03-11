@@ -145,7 +145,7 @@ export default function PlacesList({mobile, onShowLocation}) {
         ) : isSuccess && data?.pages && (
           <Masonry columns={{ xs: 1, md: 2, lg: Math.max(2, Math.min(3, length)), xl: Math.max(2, Math.min(4, length)) }} spacing={0}>
               {data.pages.map((page, pageIndex) =>
-                  <Fragment key={page.page}>
+                  <Fragment key={pageIndex}>
                       {page.results.map((place, placeIndex) =>
                           <Box key={place.id} ref={(pageIndex * 20 + placeIndex) === length - 1 ? loadMoreRef : undefined } sx={{ p: 1 }}>
                               <PlaceCard place={place} mobile={mobile} onOpenPlace={onOpenPlace} onShowLocation={onShowLocation} />
