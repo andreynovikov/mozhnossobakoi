@@ -72,7 +72,7 @@ export default function PlacesLayer({mobile, kindFilter, onPlaceDetails}) {
             }
             setTimeout(() => marker.openPopup(), 100);
         }
-    }, [place, marker, placeId, isPlaceSuccess]);
+    }, [place, marker, placeId, isPlaceSuccess, mobile]);
 
     const handleMarkerClick = (e, id) => {
         console.log('click', id, e.target._leaflet_id);

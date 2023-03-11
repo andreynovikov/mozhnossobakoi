@@ -12,7 +12,7 @@ const StabLayer = L.Layer.extend({
         minZoom: 0,
         maxZoom: 19
     },
-    onAdd: function (map) {},
+    onAdd: function (map) {}, // eslint-disable-line no-unused-vars
     beforeAdd: function (map) { map._addZoomLimit(this) },
     onRemove: function (map) { map._removeZoomLimit(this) }
 });
@@ -24,7 +24,7 @@ const stabLayer = createTileLayerComponent(function createTileLayer({ type, ...o
             }
         }, updateGridLayer);
 
-export default function YandexTileLayer({type, ...options}) {
+export default function YandexTileLayer({type, ...options}) {  // eslint-disable-line no-unused-vars
     const [Layer, setLayer] = useState(stabLayer);
 
     const createLayer = () => {

@@ -62,7 +62,7 @@ export default function Place({id, mobile, fromMap, onShowLocation, setDocumentT
                 setTitle(place.name + ': описание места, куда можно с собакой');
             ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: place.name });
         }
-    }, [place, isSuccess]);
+    }, [place, isSuccess]); // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
       isSuccess && place ?
@@ -108,7 +108,7 @@ export default function Place({id, mobile, fromMap, onShowLocation, setDocumentT
           }
 
           {place.reviews.length > 0 && <Grid container direction={mobile ? "column" : "row"} spacing={2} sx={{ my: 1 }}>
-            {place.reviews.map((review, idx) =>
+            {place.reviews.map((review) =>
               <Grid item key={review.id}>
                 <Paper sx={{p: 1, minWidth: 200, maxWidth: mobile ? "inherit" : 320}}>
                   <Typography variant="body1" gutterBottom>

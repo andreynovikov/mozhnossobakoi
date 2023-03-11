@@ -90,7 +90,7 @@ export default forwardRef(function Map({mobile}, ref) {
 
     useEffect(() => {
         ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'Карта мест' });
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (map)
@@ -114,7 +114,7 @@ export default forwardRef(function Map({mobile}, ref) {
             hashParams.map = [zoom, center.lat.toFixed(precision), center.lng.toFixed(precision)].join('/');
             setHashParams(hashParams, {replace: true});
         }
-    }, [map, hashParams.map]);
+    }, [map, hashParams.map, setHashParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         setFilterErrorOpen(filter.length === 1);
@@ -127,7 +127,7 @@ export default forwardRef(function Map({mobile}, ref) {
         }
     };
 
-	const onLocationError = (err, control) => {
+	const onLocationError = (err, control) => { // eslint-disable-line no-unused-vars
 		setLocationErrorOpen(true);
 	}
 
@@ -218,7 +218,7 @@ export default forwardRef(function Map({mobile}, ref) {
                     setPlaceId(id);
             }
         }
-    }, [hashParams.place, map, markerRef]);
+    }, [hashParams.place, map, markerRef, mobile]);
 
     useImperativeHandle(ref, () => ({
         showLocation,

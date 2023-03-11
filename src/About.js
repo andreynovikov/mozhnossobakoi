@@ -19,7 +19,7 @@ export default function About({mobile}) {
 
     useEffect(() => {
         ReactGA.send({ hitType: 'pageview', page: location.pathname + location.search, title: 'О проекте' });
-    }, []);
+    }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
     return (
       <Box sx={{ position: "relative", overflow: "auto" }}>

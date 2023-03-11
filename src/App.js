@@ -64,7 +64,7 @@ export default function App() {
 
     const onShowLocation = (position) => {
         navigate('/');
-        new Promise(function (resolve, reject) {
+        new Promise(function (resolve) {
             (function waitForMap() {
                 if (mapRef && mapRef.current) return resolve();
                 setTimeout(waitForMap, 30);
@@ -77,7 +77,7 @@ export default function App() {
     const handleAdd = () => {
         if (location.pathname !== '/')
             navigate('/');
-        new Promise(function (resolve, reject) {
+        new Promise(function (resolve) {
             (function waitForMap() {
                 if (mapRef && mapRef.current) return resolve();
                 setTimeout(waitForMap, 30);
